@@ -22,9 +22,10 @@ namespace DynamicReport.Report
 
         public ReportModel(IEnumerable<ReportField> availableFields, string sqlQuery)
         {
-            if (ValidateFieldsDefinitions(availableFields) != null)
+            var error = ValidateFieldsDefinitions(availableFields);
+            if (!string.IsNullOrEmpty(error))
             {
-                throw new ArgumentException(ValidateFieldsDefinitions(availableFields), "availableFields");
+                throw new ArgumentException(error, "availableFields");
             }
 
             SqlQuery = sqlQuery;
@@ -47,7 +48,7 @@ namespace DynamicReport.Report
             }
 
             var data =
-                new ReportQueryBuilder().GetDataFromDB(
+                new QueryBuilder().GetDataFromDB(
                     columns.Select(x => AvailableFields.Single(y => y.Title == x)),
                     filters, SqlQuery,
                     hospitalId);

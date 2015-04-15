@@ -7,7 +7,7 @@ using DynamicReport.Report;
 
 namespace DynamicReport.SqlEngine
 {
-    public class ReportQueryBuilder
+    public class QueryBuilder
     {
         private static Dictionary<ReportFilterType, Func<string, string>> _tBag;
         private static Dictionary<ReportFilterType, Func<string, string>> TBag 

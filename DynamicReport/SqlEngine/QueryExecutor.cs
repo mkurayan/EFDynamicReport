@@ -41,27 +41,27 @@ namespace DynamicReport.SqlEngine
             return parameter;
         }
 
-        public DataTable ExecuteToDataTable(string asSql, IDataParameter[] aoaParameters, IEnumerable<string> columns)
+        public DataTable ExecuteToDataTable(string sqlQuery, IDataParameter[] parameters, IEnumerable<string> columns)
         {
             SqlConnection loConnection = new SqlConnection(ConnectionString);
             loConnection.Open();
 
             try
             {
-                DataTable loTable = new DataTable();
+                DataTable table = new DataTable();
 
                 foreach (var column in columns)
                 {
-                    loTable.Columns.Add(column, typeof (string));
+                    table.Columns.Add(column, typeof (string));
                 }
 
-                using (SqlDataAdapter loAdapter = new SqlDataAdapter(asSql, loConnection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(sqlQuery, loConnection))
                 {
-                    loAdapter.SelectCommand.Parameters.AddRange(aoaParameters);
-                    loAdapter.Fill(loTable);
+                    adapter.SelectCommand.Parameters.AddRange(parameters);
+                    adapter.Fill(table);
                 }
 
-                return loTable;
+                return table;
             }
             catch (Exception loExc)
             {
@@ -79,35 +79,35 @@ namespace DynamicReport.SqlEngine
         /// <summary>
         /// Builds SQL error string that contains SQL statement and SQL parameters.
         /// </summary>
-        /// <param name="asSql">SQL statement.</param>
-        /// <param name="aoaParameters">SQL parameters.</param>
+        /// <param name="sql">SQL statement.</param>
+        /// <param name="parameters">SQL parameters.</param>
         /// <returns>String that contains SQL statement and SQL parameters.</returns>
-        public string GetSQLErrorString(string asSql, object[] aoaParameters)
+        public string GetSQLErrorString(string sql, object[] parameters)
         {
-            if (aoaParameters == null)
-                aoaParameters = new object[0];
+            if (parameters == null)
+                parameters = new object[0];
 
-            string lsSQLTemplate = "SQL Command: [{0}]. ";
-            string lsParamsTemplate = "Parameters: [{0}].";
-            StringBuilder loParams = new StringBuilder();
-            foreach (object loParam in aoaParameters)
+            string sqlTemplate = "SQL Command: [{0}]. ";
+            string paramsTemplate = "Parameters: [{0}].";
+            StringBuilder sqlParams = new StringBuilder();
+            foreach (object loParam in parameters)
             {
-                loParams.Append("{");
-                loParams.Append(loParam);
-                loParams.Append("}");
-                loParams.Append("|");
+                sqlParams.Append("{");
+                sqlParams.Append(loParam);
+                sqlParams.Append("}");
+                sqlParams.Append("|");
             }
 
-            lsSQLTemplate = String.Format(lsSQLTemplate, asSql);
+            sqlTemplate = String.Format(sqlTemplate, sql);
 
-            if (loParams.Length > 0)
+            if (sqlParams.Length > 0)
             {
-                loParams.Remove(loParams.Length - 1, 1);
-                lsParamsTemplate = String.Format(lsParamsTemplate, loParams.ToString());
-                lsSQLTemplate += lsParamsTemplate;
+                sqlParams.Remove(sqlParams.Length - 1, 1);
+                paramsTemplate = String.Format(paramsTemplate, sqlParams.ToString());
+                sqlTemplate += paramsTemplate;
             }
 
-            return lsSQLTemplate;
+            return sqlTemplate;
         }
     }
 }
