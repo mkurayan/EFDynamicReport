@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
@@ -8,32 +9,20 @@ namespace DynamicReport.SqlEngine
 {
     public class ReportQueryBuilder
     {
-        private static TransformationBag _tBag;
-        private static TransformationBag TBag
+        private static Dictionary<ReportFilterType, Func<string, string>> _tBag;
+        private static Dictionary<ReportFilterType, Func<string, string>> TBag 
         {
             get
             {
                 if (_tBag == null)
                 {
-                    var comparableFilters = new[]
+                    Func<string, string> sqlLike = x => "'%' + " + x + " + '%'";
+
+                    _tBag = new Dictionary<ReportFilterType, Func<string, string>>()
                     {
-                        ReportFilterType.Equal, ReportFilterType.GreatThen, ReportFilterType.GreatThenOrEqualTo,
-                        ReportFilterType.LessThen, ReportFilterType.LessThenOrEquaslTo, ReportFilterType.NotEqual
+                        { ReportFilterType.Include, sqlLike},
+                        { ReportFilterType.NotInclude, sqlLike}
                     };
-
-                    var notComparableFilters = new[]
-                    {
-                        ReportFilterType.Include, ReportFilterType.NotInclude
-                    };
-
-                    _tBag = new TransformationBag();
-
-                    //Wrap parameter value inside %...%. Example: WHERE Name LIKE '%' + @PartialName + '%'                
-                    _tBag.AddTransformation(notComparableFilters, new[] { ReportFieldType.General, ReportFieldType.Date, ReportFieldType.Time }, (x => "'%' + " + x + " + '%'"));
-
-                    _tBag.AddTransformation(comparableFilters, ReportFieldType.Time, (x => string.Format("CONVERT(varchar,{0},100)", x)));
-
-                    _tBag.AddTransformation(comparableFilters, ReportFieldType.Date, (x => string.Format("CONVERT(varchar,{0},107)", x)));
                 }
 
                 return _tBag;
@@ -54,7 +43,7 @@ namespace DynamicReport.SqlEngine
                 if (IsSqlCommaNeeded(colsOrder))
                     colsOrder += ",";
 
-                colsOrder += TBag.ApplyTransformation(ReportFilterType.Equal, fieldDefenition.ReportFieldType, fieldDefenition.SqlValueExpression) + " AS " + fieldDefenition.SqlAlias;
+                colsOrder += fieldDefenition.SqlValueExpression + " AS " + fieldDefenition.SqlAlias;
             }
 
             //Add default parameters which always uses in reports.
@@ -71,11 +60,15 @@ namespace DynamicReport.SqlEngine
 
                 var fieldDefenition =  reportFields.Single(x=> x.Title == filter.ReportFieldTitle);
 
-                var parameter = QueryExecutor.GenerateDBParameter("p" + i, filter.FormattedValue, SqlDbType.NVarChar);
+                var formattedFilterValue = fieldDefenition.InputValueTransformation != null
+                    ? fieldDefenition.InputValueTransformation(filter.Value)
+                    : filter.Value;
+
+                var parameter = QueryExecutor.GenerateDBParameter("p" + i, formattedFilterValue, SqlDbType.NVarChar);
                 sqlParams.Add(parameter);
 
                 sqlFilter += " AND ";
-                sqlFilter += fieldDefenition.GetSearchCondition(filter.Value, filter.FilterType, parameter.ParameterName) ?? BuildSqlFilter(filter.FilterType, fieldDefenition.ReportFieldType, fieldDefenition.SqlValueExpression, parameter.ParameterName);
+                sqlFilter += BuildSqlFilter(filter.FilterType, fieldDefenition.SqlValueExpression, parameter.ParameterName);
             }
 
             var sqlAllData = string.Format(sqlQuery, colsOrder, sqlFilter);
@@ -88,10 +81,14 @@ namespace DynamicReport.SqlEngine
             return !string.IsNullOrWhiteSpace(sql) && !sql.EndsWith(",");
         }
 
-        private static string BuildSqlFilter(ReportFilterType filterType, ReportFieldType reportFieldType, string sqlValueExpression, string sqlpParameterName)
+        private static string BuildSqlFilter(ReportFilterType filterType, string sqlValueExpression, string sqlpParameterName)
         {
             //Apply SQL transformation. Wrap walue to %..% symbols and so on.
-            sqlpParameterName = TBag.ApplyTransformation(filterType, reportFieldType, sqlpParameterName);
+            if (TBag.ContainsKey(filterType))
+            {
+                sqlpParameterName = TBag[filterType](sqlpParameterName);
+            }
+            
 
             //Wrap SQL query with 'isnull(...) check' in ordet to correct checking for inequality.
             //For more detail see http://stackoverflow.com/questions/5618357/sql-server-null-vs-empty-string

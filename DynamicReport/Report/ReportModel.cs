@@ -20,7 +20,7 @@ namespace DynamicReport.Report
         /// <returns></returns>
         public string SqlQuery { get; private set; }
 
-        public ReportModel( IEnumerable<ReportField> availableFields, string sqlQuery)
+        public ReportModel(IEnumerable<ReportField> availableFields, string sqlQuery)
         {
             if (ValidateFieldsDefinitions(availableFields) != null)
             {
@@ -44,12 +44,6 @@ namespace DynamicReport.Report
             if (!string.IsNullOrEmpty(error))
             {
                 throw new ReportException(error);
-            }
-
-            foreach (var filter in filters)
-            {
-                filter.FormattedValue =
-                    AvailableFields.Single(x => x.Title == filter.ReportFieldTitle).InputParameterValueTransformation(filter.Value);
             }
 
             var data =
@@ -110,7 +104,7 @@ namespace DynamicReport.Report
 
             foreach (var field in columnsTitles)
             {
-                if (!AvailableFields.Any(x => x.Title == field))
+                if (AvailableFields.All(x => x.Title != field))
                 {
                     errors.Add("Unknow report filed: " + field);
                 }
@@ -118,7 +112,7 @@ namespace DynamicReport.Report
 
             foreach (var filter in filters)
             {
-                if (!AvailableFields.Any(x => x.Title == filter.ReportFieldTitle))
+                if (AvailableFields.All(x => x.Title != filter.ReportFieldTitle))
                 {
                     errors.Add("Unknow report filter, field: " + filter.ReportFieldTitle);
                 }

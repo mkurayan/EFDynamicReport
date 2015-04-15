@@ -28,7 +28,6 @@ namespace DynamicReport.SqlEngine
             get { return _connectionString; }
         }
 
-
         public static IDataParameter GenerateDBParameter(string parameterName, object parameterValue, SqlDbType parameterType)
         {
             if (string.IsNullOrEmpty(parameterName) || parameterValue == null)

@@ -59,7 +59,6 @@
     <Compile Include="SqlEngine\QueryExecutor.cs" />
     <Compile Include="SqlEngine\ReportQueryBuilder.cs" />
     <Compile Include="SqlEngine\SqlConverter.cs" />
-    <Compile Include="SqlEngine\TransformationBag.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

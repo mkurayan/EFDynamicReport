@@ -32,15 +32,5 @@ namespace DynamicReport.Report
         /// This transformation will be applied on user input before it will be passed to server.
         /// </summary>
         public virtual Func<string, string> InputValueTransformation { get; set; }
-
-        ///// <summary>
-        ///// Depend on user input returns sql expression for search condition.
-        ///// </summary>
-        ///// <param name="inputContext"></param>
-        ///// <returns></returns>
-        //public virtual string GetSearchCondition(string inputContext, ReportFilterType filterType, string paramName)
-        //{
-        //    return null;
-        //}
     }
 }
