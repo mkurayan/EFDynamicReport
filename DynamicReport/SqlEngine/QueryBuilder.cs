@@ -29,7 +29,8 @@ namespace DynamicReport.SqlEngine
             }
         }
 
-        public DataTable GetDataFromDB(IEnumerable<ReportField> fields, ReportFilter[] filters, string sqlQuery, int hospitalId)
+        //ToDo: Default parameters??? Like HospitalId!
+        public Query BuildQuery(IEnumerable<ReportField> fields, IEnumerable<ReportFilter> filters, string sqlQuery, int hospitalId)
         {
             //Always order report columns and filters. As result SQL will not generate different compiled plans when columns in reports have different order.
             ReportField[] reportFields = fields.OrderBy(x => x.Title).ToArray();
@@ -53,27 +54,27 @@ namespace DynamicReport.SqlEngine
             };
 
             string sqlFilter = "";
-
-            for (int i = 0; i < filters.Count(); i++)
+            foreach (var filter in filters)
             {
-                var filter = filters[i];
-
                 var fieldDefenition =  reportFields.Single(x=> x.Title == filter.ReportFieldTitle);
 
                 var formattedFilterValue = fieldDefenition.InputValueTransformation != null
                     ? fieldDefenition.InputValueTransformation(filter.Value)
                     : filter.Value;
 
-                var parameter = QueryExecutor.GenerateDBParameter("p" + i, formattedFilterValue, SqlDbType.NVarChar);
+                var parameter = QueryExecutor.GenerateDBParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
                 sqlParams.Add(parameter);
 
                 sqlFilter += " AND ";
                 sqlFilter += BuildSqlFilter(filter.FilterType, fieldDefenition.SqlValueExpression, parameter.ParameterName);
             }
 
-            var sqlAllData = string.Format(sqlQuery, colsOrder, sqlFilter);
-
-            return new QueryExecutor(ConfigurationManager.ConnectionStrings["SnapConn"].ConnectionString).ExecuteToDataTable(sqlAllData, sqlParams.ToArray(), reportFields.Select(x=> x.SqlAlias));
+            return new Query()
+            {
+                SqlQuery = string.Format(sqlQuery, colsOrder, sqlFilter),
+                Parameters = sqlParams,
+                Columns = reportFields.Select(x => x.SqlAlias)
+            };
         }
 
         private static bool IsSqlCommaNeeded(string sql)

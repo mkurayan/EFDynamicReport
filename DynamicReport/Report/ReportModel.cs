@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,7 @@ namespace DynamicReport.Report
 
             AvailableFields = availableFields.ToArray();
         }
-
+        //ToDo: hospitalId
         /// <summary>
         /// Process report with proposed fields and filters, return report data.
         /// </summary>
@@ -47,11 +48,13 @@ namespace DynamicReport.Report
                 throw new ReportException(error);
             }
 
+            var query = 
+                new QueryBuilder()
+                    .BuildQuery(columns.Select(x => AvailableFields.Single(y => y.Title == x)), filters, SqlQuery, hospitalId);
+
             var data =
-                new QueryBuilder().GetDataFromDB(
-                    columns.Select(x => AvailableFields.Single(y => y.Title == x)),
-                    filters, SqlQuery,
-                    hospitalId);
+                new QueryExecutor(ConfigurationManager.ConnectionStrings["SnapConn"].ConnectionString)
+                    .ExecuteToDataTable(query);
 
             return GetJson(data);
         }

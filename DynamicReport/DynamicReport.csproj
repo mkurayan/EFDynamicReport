@@ -56,8 +56,9 @@
     <Compile Include="Report\ReportFilterType.cs" />
     <Compile Include="Report\ReportModel.cs" />
     <Compile Include="SqlEngine\EFMappingExtractor.cs" />
+    <Compile Include="SqlEngine\Query.cs" />
     <Compile Include="SqlEngine\QueryExecutor.cs" />
-    <Compile Include="SqlEngine\ReportQueryBuilder.cs" />
+    <Compile Include="SqlEngine\QueryBuilder.cs" />
     <Compile Include="SqlEngine\SqlConverter.cs" />
   </ItemGroup>
   <ItemGroup>

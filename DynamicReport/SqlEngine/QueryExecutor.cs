@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 
 namespace DynamicReport.SqlEngine
@@ -41,23 +42,23 @@ namespace DynamicReport.SqlEngine
             return parameter;
         }
 
-        public DataTable ExecuteToDataTable(string sqlQuery, IDataParameter[] parameters, IEnumerable<string> columns)
+        public DataTable ExecuteToDataTable(Query query)
         {
-            SqlConnection loConnection = new SqlConnection(ConnectionString);
-            loConnection.Open();
+            SqlConnection connection = new SqlConnection(ConnectionString);
+            connection.Open();
 
             try
             {
                 DataTable table = new DataTable();
 
-                foreach (var column in columns)
+                foreach (var column in query.Columns)
                 {
                     table.Columns.Add(column, typeof (string));
                 }
 
-                using (SqlDataAdapter adapter = new SqlDataAdapter(sqlQuery, loConnection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(query.SqlQuery, connection))
                 {
-                    adapter.SelectCommand.Parameters.AddRange(parameters);
+                    adapter.SelectCommand.Parameters.AddRange(query.Parameters.ToArray());
                     adapter.Fill(table);
                 }
 
@@ -72,7 +73,7 @@ namespace DynamicReport.SqlEngine
             }
             finally
             {
-                loConnection.Dispose();      
+                connection.Dispose();      
             }
         }
 
