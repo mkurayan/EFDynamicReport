@@ -38,10 +38,18 @@ namespace DynamicReport.Mapping
         {
             var convertor = new SqlConverter(new EFMappingExtractor(_context), "root_ds");
 
-            var reportFields = ReportFields.Select(x => x.ConverLambdaExpressionToSql(convertor));
-            var reportDataSource = DataSource.ConverLambdaExpressionToSql(convertor);
+            var model = new ReportModel(
+                new QueryBuilder(),
+                new QueryExecutor(_context.Database.Connection.ConnectionString));
 
-            return new ReportModel(reportFields, reportDataSource);
+            model.SetDataSource(DataSource.ConverLambdaExpressionToSql(convertor));
+
+            foreach (var repotField in ReportFields.Select(x => x.ConverLambdaExpressionToSql(convertor)))
+            {
+                model.AddReportField(repotField);
+            }
+
+            return model;
         }
 
         protected FieldMapper FieldFromLambda<TSource, TProperty>(string title, Expression<Func<TSource, TProperty>> property)

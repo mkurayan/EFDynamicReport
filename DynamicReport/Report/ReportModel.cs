@@ -13,25 +13,64 @@ namespace DynamicReport.Report
         /// <summary>
         /// Set of available fields in report.
         /// </summary>
-        public ReportField[] Fields { get; private set; }
+        private IList<ReportField> Fields { get; set; }
 
         /// <summary>
         /// Report SQL query.
         /// </summary>
         /// <returns></returns>
-        public ReportDataSource DataSource { get; private set; }
+        private ReportDataSource DataSource { get; set; }
+        
+        private readonly QueryBuilder _queryBuilder;
 
-        public ReportModel(IEnumerable<ReportField> availableFields, ReportDataSource _dataSource)
+        private readonly QueryExecutor _queryExecutor;
+
+        public ReportModel(QueryBuilder queryBuilder, QueryExecutor queryExecutor)
         {
-            var error = ValidateFieldsDefinitions(availableFields);
-            if (!string.IsNullOrEmpty(error))
+            if (queryBuilder == null)
             {
-                throw new ArgumentException(error, "availableFields");
+                throw new ArgumentNullException("queryBuilder");
             }
 
-            DataSource = _dataSource;
+            if (queryExecutor == null)
+            {
+                throw new ArgumentNullException("queryExecutor");
+            }
 
-            Fields = availableFields.ToArray();
+            _queryBuilder = queryBuilder;
+            _queryExecutor = queryExecutor;
+
+            Fields = new List<ReportField>();
+        }
+
+        public void AddReportField(ReportField reportField)
+        {
+            if (reportField == null)
+            {
+                throw new ArgumentNullException("reportField");
+            }
+
+            if (Fields.Any(x => x.SqlAlias == reportField.SqlAlias))
+            {
+                throw new ReportException(string.Format("Report model can not contain fields with equal SqlAliaces: {0}", reportField.SqlAlias));
+            }
+
+            Fields.Add(reportField);
+        }
+
+        public void SetDataSource(ReportDataSource dataSource)
+        {
+            if (dataSource == null)
+            {
+                throw new ArgumentNullException("dataSource", "Report data source can not be null");
+            }
+
+            if (string.IsNullOrEmpty(dataSource.SqlQuery))
+            {
+                throw new ReportException("Report data source contain empty sql query");
+            }
+
+            DataSource = dataSource;
         }
         
         /// <summary>
@@ -48,13 +87,9 @@ namespace DynamicReport.Report
                 throw new ReportException(error);
             }
 
-            var query = 
-                new QueryBuilder()
-                    .BuildQuery(columns.Select(x => Fields.Single(y => y.Title == x)), filters, DataSource.SqlQuery);
+            var query = _queryBuilder.BuildQuery(columns.Select(x => Fields.Single(y => y.Title == x)), filters, DataSource.SqlQuery);
 
-            var data =
-                new QueryExecutor(ConfigurationManager.ConnectionStrings["SnapConn"].ConnectionString)
-                    .ExecuteToDataTable(query);
+            var data = _queryExecutor.ExecuteToDataTable(query);
 
             return GetJson(data);
         }
@@ -133,26 +168,5 @@ namespace DynamicReport.Report
 
             return error.ToString();
         }
-
-        private string ValidateFieldsDefinitions(IEnumerable<ReportField> reportFieldDefinitions)
-        {
-            if (reportFieldDefinitions == null)
-            {
-                return "Null";
-            }
-
-            if (!reportFieldDefinitions.Any())
-            {
-                return "Must contain at least one available field.";
-            }
-
-            var duplicates = reportFieldDefinitions.GroupBy(x => x.Title).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
-            if (duplicates.Any())
-            {
-                return string.Format("Report model can not contain duplicate fields: {0}",string.Join(",", duplicates));
-            }
-
-            return null;
-        }     
     }
 }

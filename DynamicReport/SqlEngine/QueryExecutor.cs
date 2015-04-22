@@ -15,10 +15,10 @@ namespace DynamicReport.SqlEngine
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="asConnectionString">Connection string.</param>
-        public QueryExecutor(string asConnectionString)
+        /// <param name="connectionString">Connection string.</param>
+        public QueryExecutor(string connectionString)
         {
-            _connectionString = asConnectionString;
+            _connectionString = connectionString;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace DynamicReport.SqlEngine
 
         public DataTable ExecuteToDataTable(Query query)
         {
-            SqlConnection connection = new SqlConnection(ConnectionString);
+            SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
 
             try
