@@ -64,7 +64,7 @@ namespace DynamicReport.SqlEngine
 
                 return table;
             }
-            catch (Exception loExc)
+            catch (Exception e)
             {
                 //ToDo: Implement Logging.
                 //string msg = GetSQLErrorString(asSql, aoaParameters);

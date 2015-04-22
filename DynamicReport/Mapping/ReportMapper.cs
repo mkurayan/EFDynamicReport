@@ -11,18 +11,23 @@ namespace DynamicReport.Mapping
     /// <summary>
     /// Wrapper around report model which provide easy way for report configuration, contain a collection of helping methods.
     /// </summary>
-    public abstract class ReportMapper
+    public abstract class ReportMapper 
     {
         private const string Self = "{0}";
-        private DbContext _context;
+        protected DbContext _context;
+        protected SqlConverter _sqlConverter;
 
         protected abstract IEnumerable<FieldMapper> ReportFields { get; }
-        protected abstract Dictionary<string, Type> TablesAliases { get; }
-        protected abstract string SqlQuery { get; }
+        
+        /// <summary>
+        /// Data source for report.
+        /// </summary>
+        protected abstract DataSourceMapper DataSource { get; }
 
         protected ReportMapper(DbContext context)
         {
             _context = context;
+            _sqlConverter = new SqlConverter(new EFMappingExtractor(_context));
         }
 
         /// <summary>
@@ -31,32 +36,44 @@ namespace DynamicReport.Mapping
         /// <returns></returns>
         public ReportModel BuildReportModel()
         {
-            var convertor = new SqlConverter(new EFMappingExtractor(_context), TablesAliases);
+            var convertor = new SqlConverter(new EFMappingExtractor(_context), "root_ds");
 
             var reportFields = ReportFields.Select(x => x.ConverLambdaExpressionToSql(convertor));
+            var reportDataSource = DataSource.ConverLambdaExpressionToSql(convertor);
 
-            return new ReportModel(reportFields, SqlQuery);
+            return new ReportModel(reportFields, reportDataSource);
         }
 
-        protected FieldMapper FromLambda<TSource, TProperty>(string title, Expression<Func<TSource, TProperty>> property)
+        protected FieldMapper FieldFromLambda<TSource, TProperty>(string title, Expression<Func<TSource, TProperty>> property)
         {
             LambdaExpression[] lambdaExpressions = {property};
-            return new FieldMapper(_context) { Title = title, SqlTemplate = Self, OuterExpressions = lambdaExpressions };
+            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = Self, OuterExpressions = lambdaExpressions };
         }
 
-        protected FieldMapper FromTemplate<TSource, TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
+        protected FieldMapper FieldFromTemplate<TSource, TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
         {
-            return new FieldMapper(_context) { Title = title, SqlTemplate = Self, OuterExpressions = properties };
+            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = Self, OuterExpressions = properties };
         }
 
-        protected FieldMapper FromTemplate(string title, string sqlTemplate, params LambdaExpression[] properties)
+        protected FieldMapper FieldFromTemplate(string title, string sqlTemplate, params LambdaExpression[] properties)
         {
-            return new FieldMapper(_context) { Title = title, SqlTemplate = Self, OuterExpressions = properties };
+            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = Self, OuterExpressions = properties };
         }
 
         protected LambdaExpression Lambda<TSource, TProperty>(Expression<Func<TSource, TProperty>> exp)
         {
             return exp;
+        }
+
+        protected DataSourceMapper FromLambda<TSource, TProperty>(Expression<Func<TSource, TProperty>> property)
+        {
+            LambdaExpression[] lambdaExpressions = { property };
+            return new DataSourceMapper(new SqlConverter(new EFMappingExtractor(_context))) { OuterExpressions = lambdaExpressions };
+        }
+
+        protected DataSourceMapper FromTemplate(string sqlTemplate, params LambdaExpression[] properties)
+        {
+            return new DataSourceMapper(_sqlConverter) { SqlTemplate = Self, OuterExpressions = properties };
         }
     }
 }

@@ -13,15 +13,15 @@ namespace DynamicReport.Report
         /// <summary>
         /// Set of available fields in report.
         /// </summary>
-        public ReportField[] AvailableFields { get; private set; }
+        public ReportField[] Fields { get; private set; }
 
         /// <summary>
         /// Report SQL query.
         /// </summary>
         /// <returns></returns>
-        public string SqlQuery { get; private set; }
+        public ReportDataSource DataSource { get; private set; }
 
-        public ReportModel(IEnumerable<ReportField> availableFields, string sqlQuery)
+        public ReportModel(IEnumerable<ReportField> availableFields, ReportDataSource _dataSource)
         {
             var error = ValidateFieldsDefinitions(availableFields);
             if (!string.IsNullOrEmpty(error))
@@ -29,18 +29,18 @@ namespace DynamicReport.Report
                 throw new ArgumentException(error, "availableFields");
             }
 
-            SqlQuery = sqlQuery;
+            DataSource = _dataSource;
 
-            AvailableFields = availableFields.ToArray();
+            Fields = availableFields.ToArray();
         }
-        //ToDo: hospitalId
+        
         /// <summary>
         /// Process report with proposed fields and filters, return report data.
         /// </summary>
         /// <param name="columns">Fields which will be included in report.</param>
         /// <param name="filters">Filters which will be applied on report.</param>
         /// <param name="hospitalId">Id of hospital for which report will be build.</param>
-        public List<Dictionary<string, object>> Get(string[] columns, ReportFilter[] filters, int hospitalId)
+        public List<Dictionary<string, object>> Get(string[] columns, ReportFilter[] filters)
         {
             var error = Validate(columns, filters);
             if (!string.IsNullOrEmpty(error))
@@ -50,7 +50,7 @@ namespace DynamicReport.Report
 
             var query = 
                 new QueryBuilder()
-                    .BuildQuery(columns.Select(x => AvailableFields.Single(y => y.Title == x)), filters, SqlQuery, hospitalId);
+                    .BuildQuery(columns.Select(x => Fields.Single(y => y.Title == x)), filters, DataSource.SqlQuery);
 
             var data =
                 new QueryExecutor(ConfigurationManager.ConnectionStrings["SnapConn"].ConnectionString)
@@ -67,7 +67,7 @@ namespace DynamicReport.Report
 
             for (int i = 0; i < dt.Columns.Count; i++)
             {
-                reportFields[i] = AvailableFields.Single(x => x.SqlAlias == dt.Columns[i].ColumnName);
+                reportFields[i] = Fields.Single(x => x.SqlAlias == dt.Columns[i].ColumnName);
             }
 
             foreach (DataRow dr in dt.Rows)
@@ -108,7 +108,7 @@ namespace DynamicReport.Report
 
             foreach (var field in columnsTitles)
             {
-                if (AvailableFields.All(x => x.Title != field))
+                if (Fields.All(x => x.Title != field))
                 {
                     errors.Add("Unknow report filed: " + field);
                 }
@@ -116,7 +116,7 @@ namespace DynamicReport.Report
 
             foreach (var filter in filters)
             {
-                if (AvailableFields.All(x => x.Title != filter.ReportFieldTitle))
+                if (Fields.All(x => x.Title != filter.ReportFieldTitle))
                 {
                     errors.Add("Unknow report filter, field: " + filter.ReportFieldTitle);
                 }

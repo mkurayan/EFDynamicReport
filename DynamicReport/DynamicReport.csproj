@@ -47,13 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mapping\DataSourceMapper.cs" />
+    <Compile Include="Mapping\EFMapper.cs" />
     <Compile Include="Mapping\ReportMapper.cs" />
     <Compile Include="Mapping\FieldMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportException.cs" />
+    <Compile Include="Report\ReportDataSource.cs" />
     <Compile Include="Report\ReportField.cs" />
     <Compile Include="Report\ReportFilter.cs" />
-    <Compile Include="Report\ReportFilterType.cs" />
     <Compile Include="Report\ReportModel.cs" />
     <Compile Include="SqlEngine\EFMappingExtractor.cs" />
     <Compile Include="SqlEngine\Query.cs" />

@@ -9,8 +9,10 @@ namespace DynamicReport.SqlEngine
 {
     public class QueryBuilder
     {
-        private static Dictionary<ReportFilterType, Func<string, string>> _tBag;
-        private static Dictionary<ReportFilterType, Func<string, string>> TBag 
+        private const string SqlQueryTemplate = "SELECT {0} FROM {1} WHERE {2}";
+
+        private static Dictionary<ReportFilter.FilterType, Func<string, string>> _tBag;
+        private static Dictionary<ReportFilter.FilterType, Func<string, string>> TBag 
         {
             get
             {
@@ -18,10 +20,10 @@ namespace DynamicReport.SqlEngine
                 {
                     Func<string, string> sqlLike = x => "'%' + " + x + " + '%'";
 
-                    _tBag = new Dictionary<ReportFilterType, Func<string, string>>()
+                    _tBag = new Dictionary<ReportFilter.FilterType, Func<string, string>>()
                     {
-                        { ReportFilterType.Include, sqlLike},
-                        { ReportFilterType.NotInclude, sqlLike}
+                        { ReportFilter.FilterType.Include, sqlLike},
+                        { ReportFilter.FilterType.NotInclude, sqlLike}
                     };
                 }
 
@@ -29,15 +31,14 @@ namespace DynamicReport.SqlEngine
             }
         }
 
-        //ToDo: Default parameters??? Like HospitalId!
-        public Query BuildQuery(IEnumerable<ReportField> fields, IEnumerable<ReportFilter> filters, string sqlQuery, int hospitalId)
+        public Query BuildQuery(IEnumerable<ReportField> fields, IEnumerable<ReportFilter> filters, string dataSource)
         {
             //Always order report columns and filters. As result SQL will not generate different compiled plans when columns in reports have different order.
             ReportField[] reportFields = fields.OrderBy(x => x.Title).ToArray();
 
             string colsOrder = "";
             
-            filters = filters.OrderBy(x => x.ReportFieldTitle).ThenBy(x=> x.FilterType).ToArray();
+            filters = filters.OrderBy(x => x.ReportFieldTitle).ThenBy(x=> x.Type).ToArray();
 
             foreach (var fieldDefenition in reportFields)
             {
@@ -47,12 +48,7 @@ namespace DynamicReport.SqlEngine
                 colsOrder += fieldDefenition.SqlValueExpression + " AS " + fieldDefenition.SqlAlias;
             }
 
-            //Add default parameters which always uses in reports.
-            var sqlParams = new List<IDataParameter>
-            {
-                QueryExecutor.GenerateDBParameter("HospitalID", hospitalId, SqlDbType.Int)
-            };
-
+            var sqlParams = new List<IDataParameter>();
             string sqlFilter = "";
             foreach (var filter in filters)
             {
@@ -66,12 +62,12 @@ namespace DynamicReport.SqlEngine
                 sqlParams.Add(parameter);
 
                 sqlFilter += " AND ";
-                sqlFilter += BuildSqlFilter(filter.FilterType, fieldDefenition.SqlValueExpression, parameter.ParameterName);
+                sqlFilter += BuildSqlFilter(filter.Type, fieldDefenition.SqlValueExpression, parameter.ParameterName);
             }
 
             return new Query()
             {
-                SqlQuery = string.Format(sqlQuery, colsOrder, sqlFilter),
+                SqlQuery = string.Format(SqlQueryTemplate, colsOrder, dataSource, sqlFilter),
                 Parameters = sqlParams,
                 Columns = reportFields.Select(x => x.SqlAlias)
             };
@@ -82,7 +78,7 @@ namespace DynamicReport.SqlEngine
             return !string.IsNullOrWhiteSpace(sql) && !sql.EndsWith(",");
         }
 
-        private static string BuildSqlFilter(ReportFilterType filterType, string sqlValueExpression, string sqlpParameterName)
+        private static string BuildSqlFilter(ReportFilter.FilterType filterType, string sqlValueExpression, string sqlpParameterName)
         {
             //Apply SQL transformation. Wrap walue to %..% symbols and so on.
             if (TBag.ContainsKey(filterType))
@@ -98,28 +94,28 @@ namespace DynamicReport.SqlEngine
             string sqlOperator;
             switch (filterType)
             {
-                case ReportFilterType.Equal:
+                case ReportFilter.FilterType.Equal:
                     sqlOperator = " = ";
                     break;
-                case ReportFilterType.NotEqual:
+                case ReportFilter.FilterType.NotEqual:
                     sqlOperator = " != ";
                     break;
-                case ReportFilterType.GreatThenOrEqualTo:
+                case ReportFilter.FilterType.GreatThenOrEqualTo:
                     sqlOperator = " >= ";
                     break;
-                case ReportFilterType.GreatThen:
+                case ReportFilter.FilterType.GreatThen:
                     sqlOperator = " > ";
                     break;
-                case ReportFilterType.LessThenOrEquaslTo:
+                case ReportFilter.FilterType.LessThenOrEquaslTo:
                     sqlOperator = " <= ";
                     break;
-                case ReportFilterType.LessThen:
+                case ReportFilter.FilterType.LessThen:
                     sqlOperator = " < ";
                     break;
-                case ReportFilterType.Include:
+                case ReportFilter.FilterType.Include:
                     sqlOperator = " like ";
                     break;
-                case ReportFilterType.NotInclude:
+                case ReportFilter.FilterType.NotInclude:
                     sqlOperator = " not like ";
                     break;
                 default:
