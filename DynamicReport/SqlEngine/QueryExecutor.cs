@@ -9,7 +9,6 @@ namespace DynamicReport.SqlEngine
 {
     public class QueryExecutor
     {
-        private SqlConnection _connection;
         private string _connectionString = "";
 
         /// <summary>
