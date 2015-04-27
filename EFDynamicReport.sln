@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{40A5866B-A1E
 		doc\ToDo.txt = doc\ToDo.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{DFDBF7A4-5EE0-4298-8BE6-CD018DB5B042}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchoolReport", "SchoolReport\SchoolReport.csproj", "{FAF4CBBF-006D-47C8-B58A-B9CEFD0FBDE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,15 @@ Global
 		{D27862AB-EA1B-4259-A6CE-0291D85B04F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D27862AB-EA1B-4259-A6CE-0291D85B04F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D27862AB-EA1B-4259-A6CE-0291D85B04F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAF4CBBF-006D-47C8-B58A-B9CEFD0FBDE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAF4CBBF-006D-47C8-B58A-B9CEFD0FBDE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAF4CBBF-006D-47C8-B58A-B9CEFD0FBDE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAF4CBBF-006D-47C8-B58A-B9CEFD0FBDE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FAF4CBBF-006D-47C8-B58A-B9CEFD0FBDE9} = {DFDBF7A4-5EE0-4298-8BE6-CD018DB5B042}
 	EndGlobalSection
 EndGlobal
