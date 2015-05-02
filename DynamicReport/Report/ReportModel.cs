@@ -10,6 +10,11 @@ namespace DynamicReport.Report
 {
     public class ReportModel
     {
+        public IEnumerable<ReportField> ReportFields
+        {
+            get { return Fields.AsEnumerable(); }
+        }
+
         /// <summary>
         /// Set of available fields in report.
         /// </summary>
@@ -79,7 +84,7 @@ namespace DynamicReport.Report
         /// <param name="columns">Fields which will be included in report.</param>
         /// <param name="filters">Filters which will be applied on report.</param>
         /// <param name="hospitalId">Id of hospital for which report will be build.</param>
-        public List<Dictionary<string, object>> Get(string[] columns, ReportFilter[] filters)
+        public List<Dictionary<string, object>> Get(IEnumerable<string> columns, IEnumerable<ReportFilter> filters)
         {
             var error = Validate(columns, filters);
             if (!string.IsNullOrEmpty(error))
@@ -132,7 +137,7 @@ namespace DynamicReport.Report
         /// <param name="columnsTitles">Fields which proposed for report.</param>
         /// <param name="filters">Filters which proposed for report.</param>
         /// <returns>Validation result, null if there is no validation errors.</returns>
-        private string Validate(string[] columnsTitles, IEnumerable<ReportFilter> filters)
+        private string Validate(IEnumerable<string> columnsTitles, IEnumerable<ReportFilter> filters)
         {
             var errors = new List<string>();
 

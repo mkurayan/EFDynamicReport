@@ -5,7 +5,7 @@ namespace DynamicReport.Report
 {
     public class ReportField
     {
-        public string Title { get; set; }
+        public string Title { get; internal set; }
 
         public string SqlValueExpression { get; set; }
 

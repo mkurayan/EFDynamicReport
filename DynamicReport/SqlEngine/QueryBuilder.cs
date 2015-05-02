@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Linq;
 using DynamicReport.Report;
@@ -11,8 +10,8 @@ namespace DynamicReport.SqlEngine
     {
         private const string SqlQueryTemplate = "SELECT {0} FROM {1} WHERE {2}";
 
-        private static Dictionary<ReportFilter.FilterType, Func<string, string>> _tBag;
-        private static Dictionary<ReportFilter.FilterType, Func<string, string>> TBag 
+        private static Dictionary<FilterType, Func<string, string>> _tBag;
+        private static Dictionary<FilterType, Func<string, string>> TBag 
         {
             get
             {
@@ -20,10 +19,10 @@ namespace DynamicReport.SqlEngine
                 {
                     Func<string, string> sqlLike = x => "'%' + " + x + " + '%'";
 
-                    _tBag = new Dictionary<ReportFilter.FilterType, Func<string, string>>()
+                    _tBag = new Dictionary<FilterType, Func<string, string>>()
                     {
-                        { ReportFilter.FilterType.Include, sqlLike},
-                        { ReportFilter.FilterType.NotInclude, sqlLike}
+                        { FilterType.Include, sqlLike},
+                        { FilterType.NotInclude, sqlLike}
                     };
                 }
 
@@ -78,7 +77,7 @@ namespace DynamicReport.SqlEngine
             return !string.IsNullOrWhiteSpace(sql) && !sql.EndsWith(",");
         }
 
-        private static string BuildSqlFilter(ReportFilter.FilterType filterType, string sqlValueExpression, string sqlpParameterName)
+        private static string BuildSqlFilter(FilterType filterType, string sqlValueExpression, string sqlpParameterName)
         {
             //Apply SQL transformation. Wrap walue to %..% symbols and so on.
             if (TBag.ContainsKey(filterType))
@@ -94,28 +93,28 @@ namespace DynamicReport.SqlEngine
             string sqlOperator;
             switch (filterType)
             {
-                case ReportFilter.FilterType.Equal:
+                case FilterType.Equal:
                     sqlOperator = " = ";
                     break;
-                case ReportFilter.FilterType.NotEqual:
+                case FilterType.NotEqual:
                     sqlOperator = " != ";
                     break;
-                case ReportFilter.FilterType.GreatThenOrEqualTo:
+                case FilterType.GreatThenOrEqualTo:
                     sqlOperator = " >= ";
                     break;
-                case ReportFilter.FilterType.GreatThen:
+                case FilterType.GreatThen:
                     sqlOperator = " > ";
                     break;
-                case ReportFilter.FilterType.LessThenOrEquaslTo:
+                case FilterType.LessThenOrEquaslTo:
                     sqlOperator = " <= ";
                     break;
-                case ReportFilter.FilterType.LessThen:
+                case FilterType.LessThen:
                     sqlOperator = " < ";
                     break;
-                case ReportFilter.FilterType.Include:
+                case FilterType.Include:
                     sqlOperator = " like ";
                     break;
-                case ReportFilter.FilterType.NotInclude:
+                case FilterType.NotInclude:
                     sqlOperator = " not like ";
                     break;
                 default:
