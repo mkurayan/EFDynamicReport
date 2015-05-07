@@ -9,11 +9,16 @@ namespace SchoolReport.DB
 {
     public class SchoolDbContext : DbContext
     {
+        public SchoolDbContext()
+            : base("name=SchoolDBConnectionString") 
+        {
+        }
+
         public DbSet<School> Schools { get; set; }
 
         public DbSet<Student> Students { get; set; }
 
-        public DbSet<Student> Examens { get; set; }
+        public DbSet<Examen> Examens { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
