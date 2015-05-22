@@ -19,28 +19,28 @@ namespace SchoolReport.Controllers
         }
 
         [HttpGet]
-        [Route("report")]
+        [Route("reports")]
         public IEnumerable<ReportTypeDTO> GetReportTypes()
         {
             return SchoolReportModel.GetReportTypes();
         }
 
         [HttpGet]
-        [Route("report/filters")]
+        [Route("reports/filters")]
         public IEnumerable<ReportFilterDTO> GetReportFilters()
         {
             return SchoolReportModel.GetReportFilterOperators();
         }
 
         [HttpGet]
-        [Route("report/{reportType}/columns")]
+        [Route("reports/{reportType}/columns")]
         public IEnumerable<ReportColumnDTO> GetReportColumns(int reportType)
         {
             return new SchoolReportModel((ReportType) reportType, _context).GetReportColumns();
         }
 
         [HttpPost]
-        [Route("report/{reportType}")]
+        [Route("reports/{reportType}")]
         public List<Dictionary<string, object>> BuildNewReport(int reportType, ReportDTO report)
         {
             return new SchoolReportModel((ReportType)reportType, _context).GetReportData(report);
