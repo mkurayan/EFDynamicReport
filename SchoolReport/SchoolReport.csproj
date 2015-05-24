@@ -91,6 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Scripts\apiRequestHelper.js" />
+    <Content Include="Scripts\kendoGrid.js" />
+    <Content Include="Scripts\kendoMvvmHelper.js" />
     <Content Include="Scripts\report.viewmodel.js" />
     <Content Include="Web.config" />
   </ItemGroup>

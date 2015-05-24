@@ -5,10 +5,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
+    
+    <link rel="stylesheet" href="//cdn.kendostatic.com/2015.1.429/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="//cdn.kendostatic.com/2015.1.429/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="//cdn.kendostatic.com/2015.1.429/styles/kendo.dataviz.min.css" />
+    <link rel="stylesheet" href="//cdn.kendostatic.com/2015.1.429/styles/kendo.dataviz.material.min.css" />
+
+    <script src="//cdn.kendostatic.com/2015.1.429/js/jquery.min.js"></script>
+    <script src="//cdn.kendostatic.com/2015.1.429/js/kendo.all.min.js"></script>
+    
+    <script src="Scripts/kendoMvvmHelper.js"></script>
+    <script src="Scripts/apiRequestHelper.js"></script>
+    <script src="Scripts/kendoGrid.js"></script>
+    <script src="Scripts/report.viewmodel.js"></script>
+
 </head>
 <body>
     <form id="form1" runat="server">
-    <div>
+    <div id="kBindDiv">
         <div class="configPanel">
             <input 
                     data-role="combobox"
@@ -39,7 +53,7 @@
                     data-text-field="title"
                     data-value-field="title"
                     data-bind=" value: filterSelectedField,
-                                source: reportModel.fields"
+                                source: reportModel.columns"
                 />
 
             <input style="width: 205px;"
@@ -73,13 +87,26 @@
 
     </form>
     
-    <link rel="stylesheet" href="http://cdn.kendostatic.com/2015.1.429/styles/kendo.common-material.min.css" />
-    <link rel="stylesheet" href="http://cdn.kendostatic.com/2015.1.429/styles/kendo.material.min.css" />
-    <link rel="stylesheet" href="http://cdn.kendostatic.com/2015.1.429/styles/kendo.dataviz.min.css" />
-    <link rel="stylesheet" href="http://cdn.kendostatic.com/2015.1.429/styles/kendo.dataviz.material.min.css" />
+    <script type="text/x-kendo-template" id="reportColumn">
+        <li>
+            #= title #
+            <a href="\\#" class="remove" title="Remove"  data-bind="click: removeReportColumn" data-report-field="#= title #">x</a>
+        </li>
+    </script>
+    
+    <script type="text/x-kendo-template" id="reportFilters">
+        <li>
+            #= reportFieldTitle # #= filterTitle # #= filterValue # 
+            <a href="\\#" class="remove" title="Remove" data-bind="click: removeReportFilter" data-report-hashCode="#= hashCode #">x</a>
+        </li>
+    </script>
 
-    <script src="http://cdn.kendostatic.com/2015.1.429/js/jquery.min.js"></script>
-    <script src="http://cdn.kendostatic.com/2015.1.429/js/kendo.all.min.js"></script>
-    <script src="Scripts/report.viewmodel.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var content = $("#kBindDiv");
+            kendo.bind(content, app.reportsViewModel);
+            app.reportsViewModel.LoadViewModel("#reportContent");
+        });
+    </script>
 </body>
 </html>

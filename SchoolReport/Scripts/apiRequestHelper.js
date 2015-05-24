@@ -15,7 +15,7 @@
 
 var app = app || {};
 
-snap.ApiRequest = (function () {
+app.ApiRequest = (function () {
     var defaults = {
         usedDefaultErrorHandler: true
     };
@@ -32,22 +32,9 @@ snap.ApiRequest = (function () {
 
     function addDefaultErrorHandler(request, info) {
         request.fail(function (xhr, status, error) {
-            if (xhr.status == 401) {
-                var message = "You dont have role function";
-
-                if (info && info.action) {
-                    message += " for " + info.action + ".";
-                }
-
-                if (info && info.roleFunction) {
-                    message += " Role function: " + info.roleFunction;
-                }
-
-                snapError(message);
-            }
-            if (!snap.userAborted(xhr)) {
-                snapError(error);
-            }
+            //Here we can implement any default error handler.
+            var error = "Error: " + error + ". Info: " + info.roleFunction;
+            alert(error);
         });
     }
 

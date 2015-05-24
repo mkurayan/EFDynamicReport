@@ -9,26 +9,13 @@
         reportType: "StudentReport",
         filters: [],
         columns: [],
-        // data source for report filters combo box.
-        // we use slice because this.columns & this.rows do not have 'concat()' methods
-        fields: function () {
-            var a = this.columns.slice().concat(this.rows.slice());
-            for (var i = 0; i < a.length; ++i) {
-                for (var j = i + 1; j < a.length; ++j) {
-                    if (a[i] === a[j])
-                        a.splice(j--, 1);
-                }
-            }
-
-            return a;
-        },
 
         addColumnToTeport: function (fieldDefenition) {
             if (kendoMvvmHelper.findIndex(this.columns, 'title', fieldDefenition.title) > -1) {
                 alert("Field is already added");
             } else {
                 this.columns.push(fieldDefenition);
-                this.trigger("change", { field: "fields" });
+                this.trigger("change", { field: "columns" });
             }
         },
 
@@ -37,10 +24,10 @@
             if (index > -1) {
                 var reportfield = this.columns[index];
                 this.columns.splice(index, 1);
-                this.trigger("change", { field: "fields" });
+                this.trigger("change", { field: "columns" });
 
-                //if columns or rows do not contains current field defenition we will remove all filters releated to this field.
-                if (kendoMvvmHelper.findIndex(this.fields(), 'title', fieldDefenition.title) !== -1) {
+                //if columns do not contains current field defenition we will remove all filters releated to this field.
+                if (kendoMvvmHelper.findIndex(columns, 'title', fieldDefenition.title) !== -1) {
                     return;
                 }
 
@@ -114,12 +101,11 @@
         }
     });
 
-    var AdminReportsViewModel = kendo.observable({
+    var reportsViewModel = kendo.observable({
         reportModel: ReportModel,
         reportFilterOperators: [],
         reportColumnsAvailableForReportFocus: [],
         columnSelectedField: "",
-        rowSelectedField: "",
         filterSelectedField: "",
         filterSelectedOperator: null,
         filterValue: "",
@@ -228,7 +214,7 @@
         _buildReport: function () {
             var postData = this._getReportModelForWebApi();
 
-            if (postData.columns.length === 0 && postData.rows.length === 0) {
+            if (postData.columns.length === 0) {
                 alert("Please select at least one column for report.");
                 return;
             }
@@ -294,7 +280,5 @@
         }
     });
 
-    app.adminReportsService = {
-        viewModel: AdminReportsViewModel
-    };
+    app.reportsViewModel = reportsViewModel;
 })(window, kendo, app);
