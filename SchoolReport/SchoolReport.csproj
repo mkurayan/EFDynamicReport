@@ -99,7 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\SchoolReportController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="DB\Entities\Examen.cs" />
     <Compile Include="DB\SchoolDbContext.cs" />
     <Compile Include="DB\Entities\School.cs" />

@@ -274,8 +274,16 @@
                     that.reportFilterOperators.push(element);
                 });
 
-                //that.set("reportFilterOperators", data);
                 that.trigger("change", { field: "reportFilterOperators" });
+            });
+            
+
+            util.get('/api/reports/' + this.reportModel.reportType + '/columns', "").done(function (data) {
+                data.forEach(function (element) {
+                    that.reportColumnsAvailableForReportFocus.push(element);
+                });
+
+                that.trigger("change", { field: "reportColumnsAvailableForReportFocus" });
             });
         }
     });

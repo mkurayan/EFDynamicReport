@@ -11,14 +11,14 @@ namespace DynamicReport.Mapping
     /// <summary>
     /// Wrapper around report model which provide easy way for report configuration, contain a collection of helping methods.
     /// </summary>
-    public abstract class ReportMapper 
+    public abstract class ReportMapper
     {
         private const string Self = "{0}";
         protected DbContext _context;
         protected SqlConverter _sqlConverter;
 
         protected abstract IEnumerable<FieldMapper> ReportFields { get; }
-        
+
         /// <summary>
         /// Data source for report.
         /// </summary>
@@ -54,18 +54,18 @@ namespace DynamicReport.Mapping
 
         protected FieldMapper FieldFromLambda<TSource, TProperty>(string title, Expression<Func<TSource, TProperty>> property)
         {
-            LambdaExpression[] lambdaExpressions = {property};
+            LambdaExpression[] lambdaExpressions = { property };
             return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = Self, OuterExpressions = lambdaExpressions };
         }
 
         protected FieldMapper FieldFromTemplate<TSource, TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
         {
-            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = Self, OuterExpressions = properties };
+            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = sqlTemplate, OuterExpressions = properties };
         }
 
         protected FieldMapper FieldFromTemplate(string title, string sqlTemplate, params LambdaExpression[] properties)
         {
-            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = Self, OuterExpressions = properties };
+            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = sqlTemplate, OuterExpressions = properties };
         }
 
         protected LambdaExpression Lambda<TSource, TProperty>(Expression<Func<TSource, TProperty>> exp)
@@ -76,7 +76,7 @@ namespace DynamicReport.Mapping
         protected DataSourceMapper FromLambda<TSource, TProperty>(Expression<Func<TSource, TProperty>> property)
         {
             LambdaExpression[] lambdaExpressions = { property };
-            return new DataSourceMapper(new SqlConverter(new EFMappingExtractor(_context))) { OuterExpressions = lambdaExpressions };
+            return new DataSourceMapper(new SqlConverter(new EFMappingExtractor(_context))) { SqlTemplate = Self, OuterExpressions = lambdaExpressions };
         }
 
         protected DataSourceMapper FromTemplate(string sqlTemplate, params LambdaExpression[] properties)

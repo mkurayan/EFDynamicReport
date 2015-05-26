@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Web.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace SchoolReport
 {
@@ -10,12 +12,27 @@ namespace SchoolReport
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
+                name: "ReportsApi",
                 routeTemplate: "api/{controller}/{key}",
                 defaults: new { key = RouteParameter.Optional }
             );
 
-            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            //config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+
+            RegisterSerializers(config);
+        }
+
+        private static void RegisterSerializers(HttpConfiguration config)
+        {
+
+            config.Formatters.JsonFormatter.SerializerSettings =
+                new JsonSerializerSettings
+                {
+                    ContractResolver =
+                        new CamelCasePropertyNamesContractResolver()
+                };
+
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
         }
     }
 }
