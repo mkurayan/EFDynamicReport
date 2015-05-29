@@ -33,7 +33,7 @@ app.ApiRequest = (function () {
     function addDefaultErrorHandler(request, info) {
         request.fail(function (xhr, status, error) {
             //Here we can implement any default error handler.
-            var error = "Error: " + error + ". Info: " + info.roleFunction;
+            var error = "Error: " + error + ". Info: " + info;
             alert(error);
         });
     }

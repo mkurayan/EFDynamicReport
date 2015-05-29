@@ -58,14 +58,14 @@ namespace SchoolReport.Models
        
             return new[]
             {
-                new ReportFilterDTO {FilterTitle = "Is equal to", Type = (int)FilterType.Equal},
-                new ReportFilterDTO {FilterTitle = "Is not equal to", Type = (int)FilterType.NotEqual},
-                new ReportFilterDTO {FilterTitle = "Is greater than or equal to", Type = (int)FilterType.GreatThenOrEqualTo},
-                new ReportFilterDTO {FilterTitle = "Is greater than", Type = (int)FilterType.GreatThen},
-                new ReportFilterDTO {FilterTitle = "Is less than or equal to", Type = (int)FilterType.LessThenOrEquaslTo},
-                new ReportFilterDTO {FilterTitle = "Is less than", Type = (int)FilterType.LessThen},
-                new ReportFilterDTO {FilterTitle = "Includes", Type = (int)FilterType.Include},
-                new ReportFilterDTO {FilterTitle = "Not includes", Type = (int)FilterType.NotInclude},
+                new ReportFilterDTO {FilterTitle = "Is equal to", FilterType = (int)FilterType.Equal},
+                new ReportFilterDTO {FilterTitle = "Is not equal to", FilterType = (int)FilterType.NotEqual},
+                new ReportFilterDTO {FilterTitle = "Is greater than or equal to", FilterType = (int)FilterType.GreatThenOrEqualTo},
+                new ReportFilterDTO {FilterTitle = "Is greater than", FilterType = (int)FilterType.GreatThen},
+                new ReportFilterDTO {FilterTitle = "Is less than or equal to", FilterType = (int)FilterType.LessThenOrEquaslTo},
+                new ReportFilterDTO {FilterTitle = "Is less than", FilterType = (int)FilterType.LessThen},
+                new ReportFilterDTO {FilterTitle = "Includes", FilterType = (int)FilterType.Include},
+                new ReportFilterDTO {FilterTitle = "Not includes", FilterType = (int)FilterType.NotInclude},
             };
         }
 

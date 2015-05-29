@@ -14,7 +14,7 @@ namespace SchoolReport.Models
     {
         public string FilterTitle { get; set; }
 
-        public int Type { get; set; }
+        public int FilterType { get; set; }
     }
 
     public class ReportColumnDTO

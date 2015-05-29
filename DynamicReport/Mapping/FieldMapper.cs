@@ -32,7 +32,7 @@ namespace DynamicReport.Mapping
 
         public ReportField ConverLambdaExpressionToSql(SqlConverter outerConverter)
         {
-            var sqlValueExpression = string.Format(SqlTemplate, OuterExpressions.Select(outerConverter.LambdaExpressionToColumnName));
+            var sqlValueExpression = string.Format(SqlTemplate, OuterExpressions.Select(outerConverter.LambdaExpressionToColumnName).ToArray());
 
             return new ReportField()
             {

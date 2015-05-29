@@ -8,8 +8,6 @@ namespace DynamicReport.SqlEngine
 {
     public class QueryBuilder
     {
-        private const string SqlQueryTemplate = "SELECT {0} FROM {1} WHERE {2}";
-
         private static Dictionary<FilterType, Func<string, string>> _tBag;
         private static Dictionary<FilterType, Func<string, string>> TBag 
         {
@@ -64,9 +62,15 @@ namespace DynamicReport.SqlEngine
                 sqlFilter += BuildSqlFilter(filter.Type, fieldDefenition.SqlValueExpression, parameter.ParameterName);
             }
 
+            string sqlQuery = string.Format("SELECT {0} FROM {1}", colsOrder, dataSource);
+            if (!string.IsNullOrEmpty(sqlFilter))
+            {
+                sqlQuery += string.Format(" WHERE {0}", sqlFilter);
+            }
+
             return new Query()
             {
-                SqlQuery = string.Format(SqlQueryTemplate, colsOrder, dataSource, sqlFilter),
+                SqlQuery = sqlQuery,
                 Parameters = sqlParams,
                 Columns = reportFields.Select(x => x.SqlAlias)
             };

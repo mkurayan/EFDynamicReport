@@ -32,7 +32,6 @@ namespace DynamicReport.Mapping
             return SqlConverter.LambdaExpressionToColumnName(exp);
         }
 
-
         protected string Table(Type t)
         {
             return SqlConverter.TypeToTableName(t);

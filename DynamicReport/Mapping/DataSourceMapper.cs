@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using DynamicReport.Report;
@@ -18,9 +20,11 @@ namespace DynamicReport.Mapping
 
         public ReportDataSource ConverLambdaExpressionToSql(SqlConverter outerConverter)
         {
-            var sqlValueExpression = string.Format(SqlTemplate, OuterExpressions.Select(outerConverter.LambdaExpressionToColumnName));
+            string[] tableNames = OuterExpressions
+                .Select(outerExpression => outerConverter.TypeToTableName(((ParameterExpression) outerExpression.Body).Type))
+                .ToArray();
 
-            return new ReportDataSource(sqlValueExpression);
+            return new ReportDataSource(string.Format(SqlTemplate, tableNames));
         }
     }
 }
