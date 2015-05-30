@@ -13,7 +13,7 @@ var app = app || {};
 
 app.KendoGrid = (function (global, $, kendo) {
     function Grid(gridId) {
-        this.$reportContent = $(gridId);
+        this.$reportContent = $("#" + gridId);
     }
 
     Grid.prototype = {
@@ -22,7 +22,7 @@ app.KendoGrid = (function (global, $, kendo) {
               fields = {};
 
             gridConiguration.columns.forEach(function (element) {
-                fields[element.field] = { type: element.type };
+                fields[element.field] = { type: "string" };
             });
 
             this.$reportContent.empty();

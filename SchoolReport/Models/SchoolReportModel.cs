@@ -83,8 +83,8 @@ namespace SchoolReport.Models
             return Report.Get(reportDto.Columns, reportDto.Filters.Select(x => new ReportFilter()
             {
                 ReportFieldTitle = x.ReportFieldTitle,
-                Type = (FilterType)x.Type,
-                Value = x.Value
+                Type = (FilterType)x.FilterType,
+                Value = x.FilterValue
             }));
         }
     }

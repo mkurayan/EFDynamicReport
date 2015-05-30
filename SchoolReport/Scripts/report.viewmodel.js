@@ -2,8 +2,8 @@
 
     var
         util = new app.ApiRequest(),
-        reportGrid = new app.KendoGrid("reportContent"),
-        kendoMvvmHelper = app.kendoMvvmHelper;
+        kendoMvvmHelper = app.kendoMvvmHelper,
+        reportGrid;
 
     var ReportModel = new kendo.data.ObservableObject({
         reportType: "StudentReport",
@@ -27,7 +27,7 @@
                 this.trigger("change", { field: "columns" });
 
                 //if columns do not contains current field defenition we will remove all filters releated to this field.
-                if (kendoMvvmHelper.findIndex(columns, 'title', fieldDefenition.title) !== -1) {
+                if (kendoMvvmHelper.findIndex(this.columns, 'title', fieldDefenition.title) !== -1) {
                     return;
                 }
 
@@ -76,15 +76,6 @@
 
             if (columnDefenition == null)
                 return "You can not add a filter to a column that is not in the report";
-
-            var dateFormat1 = /^(0[1-9]|1[012])[\/](0[1-9]|[12][0-9]|3[01])[\/]\d{4}$/;
-            var dateFormat2 = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[ ](0[1-9]|[12][0-9]|3[01])[,][ ](19|20)\d\d$/;
-
-            if (columnDefenition.type === 'Date' &&
-                (filterDefenition.filterType !== 'Include' && filterDefenition.filterType !== 'NotInclude') &&
-                !(dateFormat1.test(filterDefenition.filterValue) || dateFormat2.test(filterDefenition.filterValue))) {
-                return "Please enter valid date (Mmm dd, yyyy) or (mm/dd/yyyy). Example: Jul 02, 2013 ";
-            }
 
             return null;
         },
@@ -237,7 +228,7 @@
 
         _getKendoGridField: function (element) {
             var field = {
-                field: element.field,
+                field: element.alias,
                 title: element.title
             };
 
@@ -268,6 +259,8 @@
         },
 
         LoadViewModel: function () {
+            reportGrid = new app.KendoGrid("reportContent");
+
             var that = this;
             util.get('/api/reports/filters', "Get report filters").done(function (data) {
                 data.forEach(function (element) {

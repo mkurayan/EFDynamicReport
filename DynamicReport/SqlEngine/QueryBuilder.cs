@@ -58,7 +58,9 @@ namespace DynamicReport.SqlEngine
                 var parameter = QueryExecutor.GenerateDBParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
                 sqlParams.Add(parameter);
 
-                sqlFilter += " AND ";
+                if (!string.IsNullOrEmpty(sqlFilter))
+                    sqlFilter += " AND ";
+
                 sqlFilter += BuildSqlFilter(filter.Type, fieldDefenition.SqlValueExpression, parameter.ParameterName);
             }
 

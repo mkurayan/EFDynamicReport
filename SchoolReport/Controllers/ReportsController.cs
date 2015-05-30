@@ -46,10 +46,10 @@ namespace SchoolReport.Controllers
 
         [HttpPost]
         [Route("{reportType}")]
-        public List<Dictionary<string, object>> BuildNewReport([FromUri]string reportType, [FromBody]ReportDTO report)
+        public IHttpActionResult BuildNewReport([FromUri]string reportType, [FromBody]ReportDTO report)
         {
             ReportType rType = (ReportType) Enum.Parse(typeof (ReportType), reportType);
-            return new SchoolReportModel(rType, _context).GetReportData(report);
+            return Json(new SchoolReportModel(rType, _context).GetReportData(report));
         }
     }
 }

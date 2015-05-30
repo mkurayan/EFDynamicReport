@@ -27,8 +27,8 @@ namespace SchoolReport.Models
     public class FilterDTO
     {
         public string ReportFieldTitle { get; set; }
-        public int Type { get; set; }
-        public string Value { get; set; }
+        public int FilterType { get; set; }
+        public string FilterValue { get; set; }
     }
 
     public class ReportDTO
