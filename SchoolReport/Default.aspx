@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title></title>
+    <title>Report Page</title>
     
     <link rel="stylesheet" href="//cdn.kendostatic.com/2015.1.429/styles/kendo.common-material.min.css" />
     <link rel="stylesheet" href="//cdn.kendostatic.com/2015.1.429/styles/kendo.material.min.css" />
@@ -19,68 +19,82 @@
     <script src="Scripts/kendoGrid.js"></script>
     <script src="Scripts/report.viewmodel.js"></script>
 
+    <link href="Styles/default.css" rel="stylesheet" />
 </head>
 <body>
     <form id="form1" runat="server">
-    <div id="kBindDiv">
-        <div class="configPanel">
-            <input 
-                    data-role="combobox"
-                    data-placeholder="Select Report Columns"
-                    data-text-field="title"
-                    data-value-field="title"
-                    data-bind=" value: columnSelectedField,
-                                source: reportColumnsAvailableForReportFocus,
-                                events: {
-                                    change: addReportColumn
-                                }"
+    <div class="configPanel">
+        <div class="configPanel_header">Add Report Columns</div>
+        <div class="configPanel_selectedConfiguration">
+            <input  
+                data-role="combobox"
+                data-placeholder="---Columns---"
+                data-text-field="title"
+                data-value-field="title"
+                data-bind=" value: columnSelectedField,
+                            source: reportColumnsAvailableForReportFocus,
+                            events: {
+                                change: addReportColumn
+                            }"
                 />
-            <div class="selected-configuration">
-                <strong>Fields</strong>
-                <ul data-bind="source: reportModel.columns" data-template="reportColumn"></ul>
+            <br/>
+            <p><strong>Fields</strong></p>
+            <ul data-bind="source: reportModel.columns" data-template="reportColumn"></ul>
 
-                <ul data-bind="visible: noColumnsSelectedForReport">
-                    <li class="msg">Add Fields above</li>   
-                </ul>
-            </div>
+            <ul data-bind="visible: noColumnsSelectedForReport">
+                <li class="msg">Add Fields above</li>   
+            </ul>
         </div>
+    </div>
         
-        <div class="configPanel">
-            <input style="width: 205px;"
-                    data-role="combobox"
-                    data-placeholder="---Filter By---"
-                    data-value-primitive="true"
-                    data-text-field="title"
-                    data-value-field="title"
-                    data-bind=" value: filterSelectedField,
-                                source: reportModel.columns"
-                />
+    <div class="configPanel">
+        <div class="configPanel_header">Add Report Filters</div>
+        <div class="configPanel_selectedConfiguration">
+            <input  
+                data-role="combobox"
+                data-placeholder="---Filter By---"
+                data-value-primitive="true"
+                data-text-field="title"
+                data-value-field="title"
+                data-bind=" value: filterSelectedField,
+                            source: reportModel.columns"
+            />
 
-            <input style="width: 205px;"
+            <input  
                 data-role="combobox"
                 data-placeholder="---Select---"
                 data-value-primitive="true"
                 data-text-field="filterTitle"
                 data-value-field="filterType"
                 data-bind=" value: filterSelectedOperator,
-                            source: reportFilterOperators"
-                />
+                    source: reportFilterOperators"
+            />
                                     
-            <input type="text" data-bind="value: filterValue"/>
-            <input value="Apply Filter" data-bind="click: addReportFilter" />
-
-            <div class="selected-configuration">
-                <strong>Filters</strong>
-                <ul data-bind="source: reportModel.filters" data-template="reportFilters"></ul> 
+            <input  
+                type="text" 
+                class="k-textbox"
+                placeholder="---Value---" 
+                data-bind="value: filterValue"/>
+            
+            <a   
+                data-role="button"
+                data-sprite-css-class="k-icon k-i-funnel"
+                data-bind="events: { click: addReportFilter }"
+            >Apply Filter</a>
+            
+            <p><strong>Filters</strong></p>
+            <ul data-bind="source: reportModel.filters" data-template="reportFilters"></ul> 
                 
-                <ul data-bind="visible: noFiltersSelectedForReport">
-                    <li class="msg">Add Filters above</li>   
-                </ul>
-            </div>
+            <ul data-bind="visible: noFiltersSelectedForReport">
+                <li class="msg">Add Filters above</li>   
+            </ul>
         </div>
-        
-         <a href="#" data-bind="click: buildReport"><span>Build Report</span></a>
     </div>
+        
+    <a  data-role="button" 
+        data-bind="events: { click: buildReport }"
+        class="k-primary"
+    >Build Report</a>
      
     <div id="reportContent">
     </div>
@@ -103,7 +117,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var content = $("#kBindDiv");
+            var content = $("#form1");
             kendo.bind(content, app.reportsViewModel);
             app.reportsViewModel.LoadViewModel("#reportContent");
         });

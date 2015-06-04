@@ -1,0 +1,25 @@
+﻿body {
+    padding: 20px;
+    margin: 10px auto;
+    border-style: solid;
+    border-color: black;
+    width: 800px;
+}
+
+.configPanel {
+    
+    background-color: #e0e6fb;
+    margin-bottom: 10px;
+}
+
+.configPanel_header {
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #bfcbf6;
+   
+}
+
+.configPanel_selectedConfiguration {
+    padding: 10px;
+}

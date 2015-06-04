@@ -95,6 +95,7 @@
     <Content Include="Scripts\kendoGrid.js" />
     <Content Include="Scripts\kendoMvvmHelper.js" />
     <Content Include="Scripts\report.viewmodel.js" />
+    <Content Include="Styles\default.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

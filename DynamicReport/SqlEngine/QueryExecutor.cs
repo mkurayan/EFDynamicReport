@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -65,7 +64,7 @@ namespace DynamicReport.SqlEngine
             }
             catch (Exception e)
             {
-                //ToDo: Implement Logging.
+                //ToDo: Throw Repprt Exception!.
                 //string msg = GetSQLErrorString(asSql, aoaParameters);
                 //ErrorLogger.WriteErrorLog(new Exception(msg, loExc), _connectionString);
                 throw;

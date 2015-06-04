@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace SchoolReport.Models
+﻿namespace SchoolReport.Models
 {
     public class ReportTypeDTO
     {

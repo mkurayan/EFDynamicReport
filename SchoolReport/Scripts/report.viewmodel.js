@@ -11,7 +11,7 @@
         columns: [],
 
         addColumnToTeport: function (fieldDefenition) {
-            if (kendoMvvmHelper.findIndex(this.columns, 'title', fieldDefenition.title) > -1) {
+            if (kendoMvvmHelper.findIndex(this.columns, "title", fieldDefenition.title) > -1) {
                 alert("Field is already added");
             } else {
                 this.columns.push(fieldDefenition);
@@ -20,21 +20,19 @@
         },
 
         removeColumnFromReport: function (fieldDefenition) {
-            var index = kendoMvvmHelper.findIndex(this.columns, 'title', fieldDefenition.title);
+            var index = kendoMvvmHelper.findIndex(this.columns, "title", fieldDefenition.title);
             if (index > -1) {
                 var reportfield = this.columns[index];
                 this.columns.splice(index, 1);
                 this.trigger("change", { field: "columns" });
 
                 //if columns do not contains current field defenition we will remove all filters releated to this field.
-                if (kendoMvvmHelper.findIndex(this.columns, 'title', fieldDefenition.title) !== -1) {
+                if (kendoMvvmHelper.findIndex(this.columns, "title", fieldDefenition.title) !== -1) {
                     return;
                 }
 
-                var filterIndex = kendoMvvmHelper.findIndex(this.filters, 'reportFieldTitle', reportfield.title);
-                while (filterIndex > -1) {
-                    this.filters.splice(filterIndex, 1);
-                    filterIndex = kendoMvvmHelper.findIndex(this.filters, 'reportFieldTitle', reportfield.title);
+                while (kendoMvvmHelper.findIndex(this.filters, "reportFieldTitle", reportfield.title) > -1) {
+                    this.filters.splice(kendoMvvmHelper.findIndex(this.filters, "reportFieldTitle", reportfield.title), 1);
                 }
             }
         },
@@ -48,7 +46,7 @@
 
             filterDefenition.hashCode = this._hashCode(filterDefenition.reportFieldTitle + filterDefenition.filterTitle + filterDefenition.filterValue);
 
-            if (kendoMvvmHelper.findIndex(this.filters, 'hashCode', filterDefenition.hashCode) > -1) {
+            if (kendoMvvmHelper.findIndex(this.filters, "hashCode", filterDefenition.hashCode) > -1) {
                 alert("Filter is already added");
             } else {
                 this.filters.push(filterDefenition);
@@ -56,7 +54,7 @@
         },
 
         removeFilterFromReport: function (hashCode) {
-            var index = kendoMvvmHelper.findIndex(this.filters, 'hashCode', hashCode);
+            var index = kendoMvvmHelper.findIndex(this.filters, "hashCode", hashCode);
             if (index > -1) {
                 this.filters.splice(index, 1);
             }
@@ -69,10 +67,10 @@
             if (!filterDefenition.filterType)
                 return "Please Select Filter operator";
 
-            if (filterDefenition.filterValue === '')
+            if (filterDefenition.filterValue === "")
                 return "Please Enter Filter text";
 
-            var columnDefenition = kendoMvvmHelper.findElement(this.columns, 'title', filterDefenition.reportFieldTitle);
+            var columnDefenition = kendoMvvmHelper.findElement(this.columns, "title", filterDefenition.reportFieldTitle);
 
             if (columnDefenition == null)
                 return "You can not add a filter to a column that is not in the report";
@@ -127,7 +125,7 @@
         },
 
         removeReportFilter: function (e) {
-            this.reportModel.removeFilterFromReport(e.currentTarget.getAttribute('data-report-hashCode'));
+            this.reportModel.removeFilterFromReport(e.currentTarget.getAttribute("data-report-hashCode"));
             this._trigerChangeReportModelEvents();
         },
 
@@ -139,18 +137,10 @@
             this._clearWizardData();
 
             this._buildReport();
-            //var that = this;
-            //util.get("/api/reports/fields", "Get report default fields").done(function (reportColumns) {
-            //    reportColumns.forEach(function (column) {
-            //        that._addFieldToReport(column.title);
-            //    });
-
-            //    that._buildReport();
-            //});
         },
 
         _addFieldToReport: function (fieldTitle) {
-            var fieldDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, 'title', fieldTitle);
+            var fieldDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, "title", fieldTitle);
 
             if (fieldDefenition) {
                 this.reportModel.addColumnToTeport(fieldDefenition);
@@ -162,7 +152,7 @@
         },
 
         _removeFieldFromReport: function (fieldTitle) {
-            var columnDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, 'title', fieldTitle);
+            var columnDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, "title", fieldTitle);
 
             if (columnDefenition) {
                 this.reportModel.removeColumnFromReport(columnDefenition);
@@ -171,12 +161,12 @@
             this._trigerChangeReportModelEvents();
 
             if (this.filterSelectedField === columnDefenition.title) {
-                this.set("filterSelectedField", '');
+                this.set("filterSelectedField", "");
             }
         },
 
         _addFilterToReport: function (filterDefenition) {
-            var filterOperatorDefenition = kendoMvvmHelper.findElement(this.reportFilterOperators, 'filterType', filterDefenition.filterType);
+            var filterOperatorDefenition = kendoMvvmHelper.findElement(this.reportFilterOperators, "filterType", filterDefenition.filterType);
 
             if (filterOperatorDefenition) {
                 filterDefenition.filterTitle = filterOperatorDefenition.filterTitle;
@@ -249,10 +239,10 @@
             this.set("reportModel.filters", []);
             reportGrid.ClearGrid();
             
-            this.set("columnSelectedField", '');
-            this.set("filterSelectedField", '');
-            this.set("filterSelectedOperator", '');
-            this.set("filterValue", '');
+            this.set("columnSelectedField", "");
+            this.set("filterSelectedField", "");
+            this.set("filterSelectedOperator", "");
+            this.set("filterValue", "");
 
             //Refresh UI
             this._trigerChangeReportModelEvents();
@@ -271,7 +261,7 @@
             });
             
 
-            util.get('/api/reports/' + this.reportModel.reportType + '/columns', "").done(function (data) {
+            util.get('/api/reports/' + this.reportModel.reportType + "/columns", "").done(function (data) {
                 data.forEach(function (element) {
                     that.reportColumnsAvailableForReportFocus.push(element);
                 });

@@ -21,7 +21,6 @@ namespace SchoolReport.Controllers
         }
 
         [HttpGet]
-        //[Route("reports")]
         [Route("")]
         public IEnumerable<ReportTypeDTO> GetReportTypes()
         {
