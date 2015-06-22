@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SchoolReport.DB.Entities
@@ -21,5 +22,7 @@ namespace SchoolReport.DB.Entities
         public int SchoolYear { get; set; }
 
         public School School { get; set; }
+
+        public List<Subject> Subjects { get; set; }  
     }
 }

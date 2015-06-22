@@ -1,15 +1,15 @@
-﻿body {
+﻿
+form {
     padding: 20px;
     margin: 10px auto;
     border-style: solid;
     border-color: black;
     width: 800px;
+    background-color: rgb(171, 171, 156);
 }
 
-.configPanel {
-    
-    background-color: #e0e6fb;
-    margin-bottom: 10px;
+.configPanel { 
+    margin-bottom: 15px;
 }
 
 .configPanel_header {
@@ -21,5 +21,6 @@
 }
 
 .configPanel_selectedConfiguration {
+    background-color: #e0e6fb;
     padding: 10px;
 }

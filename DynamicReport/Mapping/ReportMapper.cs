@@ -9,7 +9,7 @@ using DynamicReport.SqlEngine;
 namespace DynamicReport.Mapping
 {
     /// <summary>
-    /// Wrapper around report model which provide easy way for report configuration, contain a collection of helping methods.
+    /// Wrapper around report model which provide easy way for report configuration, contains a collection of helping methods.
     /// </summary>
     public abstract class ReportMapper
     {

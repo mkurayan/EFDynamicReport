@@ -90,15 +90,12 @@
             </ul>
         </div>
     </div>
-        
-    <a  data-role="button" 
-        data-bind="events: { click: buildReport }"
-        class="k-primary"
-    >Build Report</a>
-     
-    <div id="reportContent">
+    <div class="configPanel">
+         <a data-role="button" 
+            data-bind="events: { click: buildReport }"
+            class="k-primary">Build Report</a>
     </div>
-
+    <div class="report-grid" id="reportContent"></div> 
     </form>
     
     <script type="text/x-kendo-template" id="reportColumn">

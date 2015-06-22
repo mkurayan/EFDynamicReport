@@ -14,7 +14,7 @@ namespace SchoolReport.DB
 
         public DbSet<Student> Students { get; set; }
 
-        public DbSet<Examen> Examens { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
