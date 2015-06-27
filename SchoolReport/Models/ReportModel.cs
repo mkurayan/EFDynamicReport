@@ -7,7 +7,7 @@ using SchoolReport.Models.SchoolReportsMapping;
 
 namespace SchoolReport.Models
 {
-    public class SchoolReportModel
+    public class ReportsModel
     {
         private readonly DbContext _context;
         private readonly ReportType _reportType;
@@ -31,7 +31,7 @@ namespace SchoolReport.Models
             }
         }
 
-        public SchoolReportModel(ReportType reportType, DbContext context)
+        public ReportsModel(ReportType reportType, DbContext context)
         {
             _reportType = reportType;
             _context = context;

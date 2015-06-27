@@ -24,14 +24,14 @@ namespace SchoolReport.Controllers
         [Route("")]
         public IEnumerable<ReportTypeDTO> GetReportTypes()
         {
-            return SchoolReportModel.GetReportTypes();
+            return ReportsModel.GetReportTypes();
         }
 
         [HttpGet]
         [Route("filters")]
         public IEnumerable<ReportFilterDTO> GetReportFilters()
         {
-            return SchoolReportModel.GetReportFilterOperators();
+            return ReportsModel.GetReportFilterOperators();
         }
 
         [HttpGet]
@@ -40,7 +40,7 @@ namespace SchoolReport.Controllers
         {
             ReportType rType = (ReportType) Enum.Parse(typeof (ReportType), reportType);
 
-            return new SchoolReportModel(rType, _context).GetReportColumns();
+            return new ReportsModel(rType, _context).GetReportColumns();
         }
 
         [HttpPost]
@@ -48,7 +48,7 @@ namespace SchoolReport.Controllers
         public IHttpActionResult BuildNewReport([FromUri]string reportType, [FromBody]ReportDTO report)
         {
             ReportType rType = (ReportType) Enum.Parse(typeof (ReportType), reportType);
-            return Json(new SchoolReportModel(rType, _context).GetReportData(report));
+            return Json(new ReportsModel(rType, _context).GetReportData(report));
         }
     }
 }

@@ -1,3 +1,4 @@
 1.	Show in sample how we can add default filters in order to view data which releate only to some specific entity. 
 	Examples: Only staff from specific company or region.
 2. Add complicated Field in order to use Column(...) and Table(...) methods.
+3. Unit tests?

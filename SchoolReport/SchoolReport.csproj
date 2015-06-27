@@ -117,9 +117,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DTO.cs" />
-    <Compile Include="Models\SchoolReportModel.cs" />
+    <Compile Include="Models\ReportModel.cs" />
     <Compile Include="Models\SchoolReportsMapping\Fields\Age.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\SubjectsList.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Fields\Subjects.cs" />
     <Compile Include="Models\SchoolReportsMapping\StudentReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

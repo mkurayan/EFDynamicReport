@@ -5,20 +5,20 @@ using DynamicReport.SqlEngine;
 
 namespace DynamicReport.Mapping
 {
-    public class DataSourceMapper : EFMapper
+    public class DataSourceMapper : LambdaMapper
     {
-        public DataSourceMapper(SqlConverter converter)
-            : base(converter)
+        public string SqlTemplate { get; set; }
+
+        public DataSourceMapper(EFMappingExtractor efMappingExtractor, string prefix)
+            : base(efMappingExtractor, prefix)
         {
         }
 
-        public ReportDataSource ConverLambdaExpressionToSql(SqlConverter outerConverter)
+        public ReportDataSource GetReportDataSource()
         {
-            string[] tableNames = OuterExpressions
-                .Select(outerExpression => outerConverter.TypeToTableName(((ParameterExpression) outerExpression.Body).Type))
-                .ToArray();
+            var sql = string.Format(SqlTemplate, OuterExpressions.Select(x => x.Body.Type).Select(Table).ToArray());
 
-            return new ReportDataSource(string.Format(SqlTemplate, tableNames));
+            return new ReportDataSource(sql);
         }
     }
 }

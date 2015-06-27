@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mapping\DataSourceMapper.cs" />
-    <Compile Include="Mapping\EFMapper.cs" />
+    <Compile Include="Mapping\LambdaMapper.cs" />
     <Compile Include="Mapping\ReportMapper.cs" />
     <Compile Include="Mapping\FieldMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,7 +63,6 @@
     <Compile Include="SqlEngine\Query.cs" />
     <Compile Include="SqlEngine\QueryExecutor.cs" />
     <Compile Include="SqlEngine\QueryBuilder.cs" />
-    <Compile Include="SqlEngine\SqlConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

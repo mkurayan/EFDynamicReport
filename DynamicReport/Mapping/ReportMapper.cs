@@ -13,9 +13,9 @@ namespace DynamicReport.Mapping
     /// </summary>
     public abstract class ReportMapper
     {
+        private const string RootPrefix = "root_ds";
         private const string Self = "{0}";
         protected DbContext _context;
-        protected SqlConverter _sqlConverter;
 
         protected abstract IEnumerable<FieldMapper> ReportFields { get; }
 
@@ -27,24 +27,21 @@ namespace DynamicReport.Mapping
         protected ReportMapper(DbContext context)
         {
             _context = context;
-            _sqlConverter = new SqlConverter(new EFMappingExtractor(_context));
         }
 
         /// <summary>
         /// Bild report model from Lambda mapping.
         /// </summary>
         /// <returns></returns>
-        public ReportModel BuildReportModel()
+        protected ReportModel BuildReportModel()
         {
-            var convertor = new SqlConverter(new EFMappingExtractor(_context), "root_ds");
-
             var model = new ReportModel(
                 new QueryBuilder(),
                 new QueryExecutor(_context.Database.Connection.ConnectionString));
 
-            model.SetDataSource(DataSource.ConverLambdaExpressionToSql(convertor));
+            model.SetDataSource(DataSource.GetReportDataSource());
 
-            foreach (var repotField in ReportFields.Select(x => x.ConverLambdaExpressionToSql(convertor)))
+            foreach (var repotField in ReportFields.Select(x => x.GetReportField()))
             {
                 model.AddReportField(repotField);
             }
@@ -55,17 +52,17 @@ namespace DynamicReport.Mapping
         protected FieldMapper FieldFromLambda<TSource, TProperty>(string title, Expression<Func<TSource, TProperty>> property)
         {
             LambdaExpression[] lambdaExpressions = { property };
-            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = Self, OuterExpressions = lambdaExpressions };
+            return new FieldMapper(new EFMappingExtractor(_context), RootPrefix) { Title = title, SqlTemplate = Self, OuterExpressions = lambdaExpressions };
         }
 
         protected FieldMapper FieldFromTemplate<TSource, TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
         {
-            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = sqlTemplate, OuterExpressions = properties };
+            return new FieldMapper(new EFMappingExtractor(_context), RootPrefix) { Title = title, SqlTemplate = sqlTemplate, OuterExpressions = properties };
         }
 
         protected FieldMapper FieldFromTemplate(string title, string sqlTemplate, params LambdaExpression[] properties)
         {
-            return new FieldMapper(new SqlConverter(new EFMappingExtractor(_context))) { Title = title, SqlTemplate = sqlTemplate, OuterExpressions = properties };
+            return new FieldMapper(new EFMappingExtractor(_context), RootPrefix) { Title = title, SqlTemplate = sqlTemplate, OuterExpressions = properties };
         }
 
         protected LambdaExpression Lambda<TSource, TProperty>(Expression<Func<TSource, TProperty>> exp)
@@ -76,12 +73,12 @@ namespace DynamicReport.Mapping
         protected DataSourceMapper FromLambda<TSource, TProperty>(Expression<Func<TSource, TProperty>> property)
         {
             LambdaExpression[] lambdaExpressions = { property };
-            return new DataSourceMapper(new SqlConverter(new EFMappingExtractor(_context))) { SqlTemplate = Self, OuterExpressions = lambdaExpressions };
+            return new DataSourceMapper(new EFMappingExtractor(_context), RootPrefix) { SqlTemplate = Self, OuterExpressions = lambdaExpressions };
         }
 
         protected DataSourceMapper FromTemplate(string sqlTemplate, params LambdaExpression[] properties)
         {
-            return new DataSourceMapper(_sqlConverter) { SqlTemplate = Self, OuterExpressions = properties };
+            return new DataSourceMapper(new EFMappingExtractor(_context), RootPrefix) { SqlTemplate = Self, OuterExpressions = properties };
         }
     }
 }

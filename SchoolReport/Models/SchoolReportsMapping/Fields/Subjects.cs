@@ -8,7 +8,7 @@ using DynamicReport.SqlEngine;
 
 namespace SchoolReport.Models.SchoolReportsMapping.Fields
 {
-    public class SubjectsList
+    public class Subjects
     {
         //ToDo: Implement
     }

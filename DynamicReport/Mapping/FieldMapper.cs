@@ -9,8 +9,10 @@ namespace DynamicReport.Mapping
     /// This class represent single field mapping. 
     /// Lambda expression will be converted to SQL expression which will be used inside Report.
     /// </summary>
-    public class FieldMapper : EFMapper
+    public class FieldMapper : LambdaMapper
     {
+        public string SqlTemplate { get; set; }
+
         public string Title { get; set; }
 
         protected virtual Func<string, string> OutputValueTransformation
@@ -23,16 +25,16 @@ namespace DynamicReport.Mapping
             get { return x => x; }
         }
 
-        public FieldMapper(SqlConverter context)
-            : base(context)
+        public FieldMapper(EFMappingExtractor efMappingExtractor, string prefix)
+            : base(efMappingExtractor, prefix)
         {
         }
 
-        public ReportField ConverLambdaExpressionToSql(SqlConverter outerConverter)
+        public ReportField GetReportField()
         {
-            var sqlValueExpression = string.Format(SqlTemplate, OuterExpressions.Select(outerConverter.LambdaExpressionToColumnName).ToArray());
+            var sqlValueExpression = string.Format(SqlTemplate, OuterExpressions.Select(Column).ToArray());
 
-            return new ReportField()
+            return new ReportField
             {
                 Title = this.Title,
                 SqlValueExpression = string.Format("({0})", sqlValueExpression),

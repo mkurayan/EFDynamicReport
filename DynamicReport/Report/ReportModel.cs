@@ -15,7 +15,7 @@ namespace DynamicReport.Report
         }
 
         /// <summary>
-        /// Set of available fields in report.
+        /// Set of fields available for report.
         /// </summary>
         private IList<ReportField> Fields { get; set; }
 
