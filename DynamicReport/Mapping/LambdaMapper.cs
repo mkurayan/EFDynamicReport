@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq.Expressions;
 using DynamicReport.SqlEngine;
 
@@ -9,27 +8,28 @@ namespace DynamicReport.Mapping
     /// Base class for all Mappers, contains common functionality which necessary for building SQL queries from C# objects.
     /// </summary>
     public abstract class LambdaMapper
-    {
-        protected DbContext _context;
-        private readonly string _prefix;
-        private EFMappingExtractor EfMappingExtractor { get; set; }
+    {    
+        /// <summary>
+        /// This prefix is used for the creation of SQL Aliases.
+        /// </summary>
+        public string TableAliasPrefix { get; private set; }
 
-        //ToDo: Remove OuterExpressions??
-        public virtual LambdaExpression[] OuterExpressions { get; set; }
+        protected EFMappingExtractor EfMappingExtractor { get; set; }
 
-        protected LambdaMapper(EFMappingExtractor efMappingExtractor) : this(efMappingExtractor, Guid.NewGuid().ToString())
+        protected LambdaMapper(EFMappingExtractor efMappingExtractor)
+            : this(efMappingExtractor, GeneratePrefix())
         {
         }
 
-        protected LambdaMapper(EFMappingExtractor efMappingExtractor, string prefix)
+        protected LambdaMapper(EFMappingExtractor efMappingExtractor, string tableAliasPrefix)
         {
-            if (prefix == null)
+            if (tableAliasPrefix == null)
             {
                 throw new ArgumentNullException("prefix");
             }
 
             EfMappingExtractor = efMappingExtractor;
-            _prefix = prefix;
+            TableAliasPrefix = tableAliasPrefix;
         }
 
         /// <summary>
@@ -74,7 +74,23 @@ namespace DynamicReport.Mapping
         private string GetTableAlias(Type t)
         {
             //Default alias.
-            return _prefix + "_" + t.Name;
+            return t.Name + "_" + TableAliasPrefix;
+        }
+
+        /// <summary>
+        /// The following method creates the shorter string and it is actually very unique. 
+        /// An iteration of 10 million didn’t create a duplicate. 
+        /// It uses the uniqueness of a GUID to create the string.
+        /// </summary>
+        /// <returns></returns>
+        private static string GeneratePrefix()
+        {
+            long i = 1;
+            foreach (byte b in Guid.NewGuid().ToByteArray())
+            {
+                i *= ((int)b + 1);
+            }
+            return string.Format("{0:x}", i - DateTime.Now.Ticks);
         }
     }
 }

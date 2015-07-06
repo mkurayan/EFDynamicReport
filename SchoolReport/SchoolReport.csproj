@@ -120,7 +120,7 @@
     <Compile Include="Models\ReportModel.cs" />
     <Compile Include="Models\SchoolReportsMapping\Fields\Age.cs" />
     <Compile Include="Models\SchoolReportsMapping\Fields\Subjects.cs" />
-    <Compile Include="Models\SchoolReportsMapping\StudentReport.cs" />
+    <Compile Include="Models\SchoolReportsMapping\StudentsReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

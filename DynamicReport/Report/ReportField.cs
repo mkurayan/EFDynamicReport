@@ -5,8 +5,15 @@ namespace DynamicReport.Report
 {
     public class ReportField
     {
+        /// <summary>
+        /// Field title in report.
+        /// Example: "Full Name"
+        /// </summary>
         public string Title { get; internal set; }
 
+        /// <summary>
+        /// Part of SQL query, describes report field data source.
+        /// </summary>
         public string SqlValueExpression { get; set; }
 
         /// <summary>
@@ -29,7 +36,7 @@ namespace DynamicReport.Report
         /// 3. Obfuscate or Encrypt sensitive data
         /// 4. Other usages...
         /// </summary>
-        public virtual Func<string, string> OutputValueTransformation { get; set; }
+        public Func<string, string> OutputValueTransformation { get; set; }
 
         /// <summary>
         /// This transformation will be applied on user input before it will be used as filter value.
@@ -39,6 +46,16 @@ namespace DynamicReport.Report
         /// 3. Decrypt sensitive data
         /// 4. Other usages...
         /// </summary>
-        public virtual Func<string, string> InputValueTransformation { get; set; }
+        public Func<string, string> InputValueTransformation { get; set; }
+
+        /// <summary>
+        /// Create empty report field. 
+        /// </summary>
+        public ReportField()
+        {
+            //set default transformations.
+            OutputValueTransformation = x => x;
+            InputValueTransformation = x => x;
+        }
     }
 }

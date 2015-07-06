@@ -21,7 +21,7 @@ namespace SchoolReport.Models
                 switch (_reportType)
                 {
                     case ReportType.StudentReport:
-                        results = new StudentReport(_context).ReportModel;
+                        results = new StudentsReport(_context).CreateReport();
                         break;
                     default:
                         throw new NotImplementedException(string.Format("GetReportModel not implemented for type: {0}", _reportType));
