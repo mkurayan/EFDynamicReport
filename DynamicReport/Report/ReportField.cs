@@ -9,7 +9,7 @@ namespace DynamicReport.Report
         /// Field title in report.
         /// Example: "Full Name"
         /// </summary>
-        public string Title { get; internal set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Part of SQL query, describes report field data source.

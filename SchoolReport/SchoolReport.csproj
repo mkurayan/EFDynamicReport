@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="DB\Entities\ExamenResult.cs" />
     <Compile Include="DB\Entities\Subject.cs" />
     <Compile Include="DB\SchoolDbContext.cs" />
     <Compile Include="DB\Entities\School.cs" />
@@ -118,8 +119,11 @@
     </Compile>
     <Compile Include="Models\DTO.cs" />
     <Compile Include="Models\ReportModel.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\Age.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\Subjects.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Fields\AgeField.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Fields\AverageScore.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Fields\MaximumScore.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Fields\MinimumScore.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Fields\SubjectsField.cs" />
     <Compile Include="Models\SchoolReportsMapping\StudentsReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

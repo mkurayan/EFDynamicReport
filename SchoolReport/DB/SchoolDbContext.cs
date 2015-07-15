@@ -22,6 +22,14 @@ namespace SchoolReport.DB
               .HasRequired(x => x.School)
               .WithMany(y => y.Students)
               .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Student>()
+                .HasMany(x => x.ExamenResults)
+                .WithRequired(x => x.Student);
+
+            modelBuilder.Entity<Subject>()
+                .HasMany(x => x.ExamenResults)
+                .WithRequired(x => x.Subject);
         }
     }
 }

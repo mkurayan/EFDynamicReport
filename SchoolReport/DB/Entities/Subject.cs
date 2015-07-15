@@ -10,6 +10,6 @@ namespace SchoolReport.DB.Entities
 
         public string SubjectName { get; set; }
 
-        public List<Student> Students { get; set; }  
+        public List<ExamenResult> ExamenResults { get; set; }  
     }
 }

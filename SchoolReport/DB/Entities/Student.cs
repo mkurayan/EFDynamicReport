@@ -23,6 +23,6 @@ namespace SchoolReport.DB.Entities
 
         public School School { get; set; }
 
-        public List<Subject> Subjects { get; set; }  
+        public List<ExamenResult> ExamenResults { get; set; }  
     }
 }

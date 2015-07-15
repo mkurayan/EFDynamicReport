@@ -42,7 +42,7 @@ namespace DynamicReport.SqlEngine
                 if (IsSqlCommaNeeded(colsOrder))
                     colsOrder += ",";
 
-                colsOrder += fieldDefenition.SqlValueExpression + " AS " + fieldDefenition.SqlAlias;
+                colsOrder += string.Format("({0}) AS {1}", fieldDefenition.SqlValueExpression, fieldDefenition.SqlAlias);
             }
 
             var sqlParams = new List<IDataParameter>();

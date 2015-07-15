@@ -64,7 +64,24 @@ namespace SchoolReport.DB
                     HomeAdress = "QR. St Person st. House 9.",
                     Phone = "+1 789 567 4237",
                     SchoolYear = 3,
-                    Subjects = new List<Subject>() {subjects[0], subjects[1], subjects[4]}
+                    ExamenResults = new List<ExamenResult>()
+                    {
+                        new ExamenResult()
+                        {
+                            Score = 59,
+                            Subject = subjects[0]
+                        },
+                        new ExamenResult()
+                        {
+                            Score = 70,
+                            Subject = subjects[1]
+                        },
+                        new ExamenResult()
+                        {
+                            Score = 75,
+                            Subject = subjects[4]
+                        }
+                    }
                 },
 
                 new Student()
@@ -76,7 +93,19 @@ namespace SchoolReport.DB
                     HomeAdress = "QR. St Person st. House 9.",
                     Phone = "+1 789 167 6276",
                     SchoolYear = 3,
-                    Subjects = new List<Subject>() {subjects[2], subjects[4]}
+                    ExamenResults = new List<ExamenResult>()
+                    {
+                        new ExamenResult()
+                        {
+                            Score = 43,
+                            Subject = subjects[2]
+                        },
+                        new ExamenResult()
+                        {
+                            Score = 65,
+                            Subject = subjects[4]
+                        }
+                    }
                 },
 
                 new Student()
@@ -88,7 +117,24 @@ namespace SchoolReport.DB
                     HomeAdress = "QR. Malony st. House 11.",
                     Phone = "+1 790 542 4132",
                     SchoolYear = 4,
-                    Subjects = new List<Subject>() {subjects[5], subjects[0], subjects[2]}
+                    ExamenResults = new List<ExamenResult>()
+                    {
+                        new ExamenResult()
+                        {
+                            Score = 78,
+                            Subject = subjects[5]
+                        },
+                        new ExamenResult()
+                        {
+                            Score = 70,
+                            Subject = subjects[0]
+                        },
+                        new ExamenResult()
+                        {
+                            Score = 89,
+                            Subject = subjects[2]
+                        }
+                    }
                 },
 
                 new Student()
@@ -100,7 +146,19 @@ namespace SchoolReport.DB
                     HomeAdress = "QR. Malony st. House 28.",
                     Phone = "+1 790 647 8473",
                     SchoolYear = 1,
-                    Subjects = new List<Subject>() {subjects[3], subjects[4]}
+                    ExamenResults = new List<ExamenResult>()
+                    {
+                        new ExamenResult()
+                        {
+                            Score = 63,
+                            Subject = subjects[3]
+                        },
+                        new ExamenResult()
+                        {
+                            Score = 58,
+                            Subject = subjects[4]
+                        }
+                    }
                 },
 
                 new Student()
@@ -112,7 +170,19 @@ namespace SchoolReport.DB
                     HomeAdress = "QR. Lagos st. House 47.",
                     Phone = "+1 790 647 8473",
                     SchoolYear = 1,
-                    Subjects = new List<Subject>() {subjects[3], subjects[4]}
+                     ExamenResults = new List<ExamenResult>()
+                    {
+                        new ExamenResult()
+                        {
+                            Score = 71,
+                            Subject = subjects[3]
+                        },
+                        new ExamenResult()
+                        {
+                            Score = 80,
+                            Subject = subjects[4]
+                        }
+                    }
                 },
             };
 
