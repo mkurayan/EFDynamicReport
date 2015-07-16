@@ -33,22 +33,30 @@ namespace DynamicReport.Mapping
             TableAliasPrefix = tableAliasPrefix;
         }
 
+        /// <summary>
+        /// Create ReportField from Lambda mapping.
+        /// </summary>
+        /// <typeparam name="TProperty">C# type of output field.</typeparam>
+        /// <param name="title">Title for field, this title will be used in report.</param>
+        /// <param name="property">Expression which represent output field.</param>
+        /// <returns>ReportField object</returns>
         public ReportField Field<TProperty>(string title, Expression<Func<TSource, TProperty>> property)
         {
-            LambdaExpression[] lambdaExpressions = { property };
-            return GetReportField(title, Self, lambdaExpressions);
+            return GetReportField(title, Self, property);
         }
 
+        /// <summary>
+        /// Create ReportField from Lambda mapping.
+        /// </summary>
+        /// <typeparam name="TProperty">C# type of output field.</typeparam>
+        /// <param name="title">Title for field, this title will be used in report.</param>
+        /// <param name="properties">Expressions which represents output field.</param>
+        /// <param name="sqlTemplate"> Allow to set custom format for output field or provide other transformations like combining or subtraction of output fields.</param>
+        /// <returns>ReportField object</returns>
         public ReportField Field<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
         {
             return GetReportField(title, sqlTemplate, properties);
         }
-
-        //ToDo: Check, do I need this method or not.
-        //public ReportField Field(string title, string sqlTemplate, params LambdaExpression[] properties)
-        //{
-        //    return GetReportField(title, sqlTemplate, properties);
-        //}
 
         public ReportDataSource GetReportDataSource()
         {
@@ -63,17 +71,7 @@ namespace DynamicReport.Mapping
         /// <returns>SQL analog of expression, format: [TableName].[ColumnName] </returns>
         public string Column<TProperty>(Expression<Func<TSource, TProperty>> exp)
         {
-            return Column((LambdaExpression)exp);
-        }
-
-        /// <summary>
-        /// Extract column and table name from expression.
-        /// </summary>
-        /// <param name="exp">Lambda expression which represent some field. Example: (Person p) => p.Name</param>
-        /// <returns>SQL analog of expression, format: [TableName].[ColumnName] </returns>
-        public string Column(LambdaExpression exp)
-        {
-            return string.Format("{0}.{1}", GetTableAlias(exp), EfMappingExtractor.GetSQLColumnName(exp));
+            return string.Format("{0}.{1}", GetTableAlias(typeof(TSource)), EfMappingExtractor.GetSQLColumnName(exp));
         }
 
         /// <summary>
@@ -83,21 +81,10 @@ namespace DynamicReport.Mapping
         /// <returns>Name of SQL table which mapped to C# Type</returns>
         public string Table()
         {
-            //return SqlConverter.TypeToTableName(t);
             return string.Format("{0} {1}", EfMappingExtractor.GetSQLTableName(typeof(TSource)), GetTableAlias(typeof(TSource)));
         }
 
-        /// <summary>
-        /// Cast Expression<Func<TSource, TProperty>> to LambdaExpression
-        /// </summary>
-        /// <param name="exp">Expression</param>
-        /// <returns>Lambda Expression</returns>
-        public LambdaExpression Lambda<TSource, TProperty>(Expression<Func<TSource, TProperty>> exp)
-        {
-            return exp;
-        }
-
-        private ReportField GetReportField(string title, string sqlTemplate, params LambdaExpression[] outerExpressions)
+        private ReportField GetReportField<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] outerExpressions)
         {
             var sqlValueExpression = string.Format(sqlTemplate, outerExpressions.Select(Column).ToArray());
 
@@ -106,13 +93,6 @@ namespace DynamicReport.Mapping
                 Title = title,
                 SqlValueExpression = string.Format("({0})", sqlValueExpression)
             };
-        }
-
-        private string GetTableAlias(LambdaExpression propertyLambda)
-        {
-            var t = EFMappingExtractor.GetTheRootObjectType(propertyLambda);
-
-            return GetTableAlias(t);
         }
 
         private string GetTableAlias(Type t)

@@ -8,7 +8,5 @@ namespace DynamicReport.SqlEngine
         public string SqlQuery { get; set; }
 
         public IEnumerable<IDataParameter> Parameters { get; set; }
-
-        public IEnumerable<string> Columns { get; set; }
     }
 }

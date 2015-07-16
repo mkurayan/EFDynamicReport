@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using DynamicReport.Report;
 
@@ -55,7 +56,7 @@ namespace DynamicReport.SqlEngine
                     ? fieldDefenition.InputValueTransformation(filter.Value)
                     : filter.Value;
 
-                var parameter = QueryExecutor.GenerateDBParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
+                var parameter = GenerateDBParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
                 sqlParams.Add(parameter);
 
                 if (!string.IsNullOrEmpty(sqlFilter))
@@ -73,8 +74,7 @@ namespace DynamicReport.SqlEngine
             return new Query()
             {
                 SqlQuery = sqlQuery,
-                Parameters = sqlParams,
-                Columns = reportFields.Select(x => x.SqlAlias)
+                Parameters = sqlParams
             };
         }
 
@@ -129,6 +129,19 @@ namespace DynamicReport.SqlEngine
             }
 
             return sqlValueExpression + sqlOperator + sqlpParameterName;
+        }
+
+        private static IDataParameter GenerateDBParameter(string parameterName, object parameterValue, SqlDbType parameterType)
+        {
+            if (string.IsNullOrEmpty(parameterName) || parameterValue == null)
+                throw new ArgumentException();
+
+            var parameter = new SqlParameter("@" + parameterName, parameterType)
+            {
+                Value = parameterValue
+            };
+
+            return parameter;
         }
     }
 }

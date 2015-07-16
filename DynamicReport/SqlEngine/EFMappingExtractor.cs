@@ -52,6 +52,20 @@ namespace DynamicReport.SqlEngine
             return (string)table.MetadataProperties["Table"].Value ?? table.Name;
         }
 
+        private Type GetTheRootObjectType(LambdaExpression exp)
+        {
+            Expression body = GetMemberExpression(exp);
+
+            // "descend" toward's the root object reference:
+            while (body is MemberExpression)
+            {
+                var memberExpr = body as MemberExpression;
+                body = memberExpr.Expression;
+            }
+
+            return body.Type;
+        }
+
         private MappingFragment FindMappingFragment(Type type)
         {
             var entitySetMapping = FindTheMappingBetweenConceptualAndStorageModel(type);
@@ -93,20 +107,6 @@ namespace DynamicReport.SqlEngine
                     .Single(s => s.EntitySet == entitySet);
 
             return mapping;
-        }
-
-        public static Type GetTheRootObjectType(LambdaExpression exp)
-        {
-            Expression body = GetMemberExpression(exp);
-
-            // "descend" toward's the root object reference:
-            while (body is MemberExpression)
-            {
-                var memberExpr = body as MemberExpression;
-                body = memberExpr.Expression;
-            }
-
-            return body.Type;
         }
 
         private static PropertyInfo GetPropertyInfo(LambdaExpression propertyLambda)
