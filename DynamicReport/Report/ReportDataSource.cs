@@ -2,10 +2,7 @@
 
 namespace DynamicReport.Report
 {
-    /// <summary>
-    /// Data source for report.
-    /// </summary>
-    public class ReportDataSource
+    public class ReportDataSource : IReportDataSource
     {
         public string SqlQuery { get; private set; }
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using DynamicReport.Mapping;
+﻿using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
 using SchoolReport.DB.Entities;
@@ -17,10 +13,10 @@ namespace SchoolReport.Models.SchoolReportsMapping.Fields
         //Outer tables
         private TableMapper<Student> S;
 
-        public MinimumScore(EFMappingExtractor efMappingExtractor, TableMapper<Student> studentTable)
+        public MinimumScore(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {
             S = studentTable;
-            e = new TableMapper<ExamenResult>(efMappingExtractor);
+            e = new TableMapper<ExamenResult>(queryExtractor);
         }
 
         public string SqlValueExpression
@@ -34,7 +30,7 @@ namespace SchoolReport.Models.SchoolReportsMapping.Fields
             }
         }
 
-        public ReportField Field(string title)
+        public IReportField Field(string title)
         {
             return new ReportField
             {

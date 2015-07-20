@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
-using DynamicReport.Mapping;
+using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
 using SchoolReport.DB.Entities;
@@ -11,33 +10,34 @@ namespace SchoolReport.Models.SchoolReportsMapping
 {
     public class StudentsReport : ReportTemplate
     {
-        private EFMappingExtractor efMappingExtractor;
+        private readonly IQueryExtractor queryExtractor;
         public TableMapper<Student> StudentTable;
 
-        public StudentsReport(DbContext context) : base(context)
+        public StudentsReport(DbContext context)
+            : base(new QueryBuilder(), new QueryExecutor(context.Database.Connection.ConnectionString))
         {
-            efMappingExtractor = new EFMappingExtractor(context);
-            StudentTable = new TableMapper<Student>(efMappingExtractor, "s");
+            queryExtractor = new QueryExtractor(context);
+            StudentTable = new TableMapper<Student>(queryExtractor, "s");
         }
 
-        private IEnumerable<ReportField> _reportFields;
-        public override IEnumerable<ReportField> ReportFields
+        private IEnumerable<IReportField> _reportFields;
+        public override IEnumerable<IReportField> ReportFields
         {
             get
             {
                 if (_reportFields == null)
                 {
-                    _reportFields = new List<ReportField>
+                    _reportFields = new List<IReportField>
                     {
                         StudentTable.Field("First Name", x => x.FirstName),
                         StudentTable.Field("Last Name", x => x.LastName),
                         StudentTable.Field("Phone", x => x.Phone),
                         StudentTable.Field("Home Adress", x => x.HomeAdress),
-                        new AverageScore(efMappingExtractor, StudentTable).Field("Average Score"),
-                        new MinimumScore(efMappingExtractor, StudentTable).Field("Minimum Score"),
-                        new MaximumScore(efMappingExtractor, StudentTable).Field("Maximum Score"),
+                        new AverageScore(queryExtractor, StudentTable).Field("Average Score"),
+                        new MinimumScore(queryExtractor, StudentTable).Field("Minimum Score"),
+                        new MaximumScore(queryExtractor, StudentTable).Field("Maximum Score"),
                         new AgeField(StudentTable).Field("Age"),
-                        new SubjectsField(efMappingExtractor, StudentTable).Field("Subjects")
+                        new SubjectsField(queryExtractor, StudentTable).Field("Subjects")
                     };
                 }
 
@@ -45,7 +45,7 @@ namespace SchoolReport.Models.SchoolReportsMapping
             }
         }
 
-        protected override ReportDataSource ReportDataSource
+        protected override IReportDataSource ReportDataSource
         {
             get { return StudentTable.GetReportDataSource(); }
         }

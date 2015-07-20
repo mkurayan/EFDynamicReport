@@ -1,4 +1,4 @@
-﻿using DynamicReport.Mapping;
+﻿using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
 using SchoolReport.DB.Entities;
@@ -12,12 +12,12 @@ namespace SchoolReport.Models.SchoolReportsMapping.Fields
         private TableMapper<ExamenResult> e; 
 
         //Outer tables
-        private TableMapper<Student> S; 
+        private TableMapper<Student> S;
 
-        public SubjectsField(EFMappingExtractor efMappingExtractor, TableMapper<Student> studentTable)
+        public SubjectsField(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {
-            sb = new TableMapper<Subject>(efMappingExtractor);
-            e = new TableMapper<ExamenResult>(efMappingExtractor);
+            sb = new TableMapper<Subject>(queryExtractor);
+            e = new TableMapper<ExamenResult>(queryExtractor);
             S = studentTable;
         }
 
@@ -34,7 +34,7 @@ namespace SchoolReport.Models.SchoolReportsMapping.Fields
             }
         }
 
-        public ReportField Field(string title)
+        public IReportField Field(string title)
         {
             return new ReportField
             {

@@ -1,6 +1,6 @@
 ﻿namespace DynamicReport.Report
 {
-    public class ReportFilter
+    public class ReportFilter : IReportFilter
     {
         public string ReportFieldTitle { get; set; }
         public FilterType Type { get; set; }

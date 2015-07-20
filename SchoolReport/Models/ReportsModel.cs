@@ -12,11 +12,11 @@ namespace SchoolReport.Models
         private readonly DbContext _context;
         private readonly ReportType _reportType;
 
-        private ReportModel Report
+        private IReportModel Report
         {
             get
             {
-                ReportModel results;
+                IReportModel results;
 
                 switch (_reportType)
                 {

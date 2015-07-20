@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using DynamicReport.Mapping;
+using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using SchoolReport.DB.Entities;
 
@@ -23,7 +23,7 @@ namespace SchoolReport.Models.SchoolReportsMapping.Fields
             get { return S.Column(x => x.DayOfBirth); }
         }
 
-        public ReportField Field(string title)
+        public IReportField Field(string title)
         {
             return new ReportField
             {

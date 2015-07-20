@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
 
-namespace DynamicReport.Mapping
+namespace DynamicReport.MappingHelpers
 {
     public class TableMapper<TSource>
     {
@@ -15,21 +15,21 @@ namespace DynamicReport.Mapping
         /// </summary>
         public string TableAliasPrefix { get; private set; }
 
-        protected EFMappingExtractor EfMappingExtractor { get; set; }
+        protected IQueryExtractor QueryExtractor { get; set; }
 
-        public TableMapper(EFMappingExtractor efMappingExtractor)
-            : this(efMappingExtractor, GeneratePrefix())
+        public TableMapper(IQueryExtractor queryExtractor)
+            : this(queryExtractor, GeneratePrefix())
         {
         }
 
-        public TableMapper(EFMappingExtractor efMappingExtractor, string tableAliasPrefix)
+        public TableMapper(IQueryExtractor queryExtractor, string tableAliasPrefix)
         {
             if (tableAliasPrefix == null)
             {
                 throw new ArgumentNullException("prefix");
             }
 
-            EfMappingExtractor = efMappingExtractor;
+            QueryExtractor = queryExtractor;
             TableAliasPrefix = tableAliasPrefix;
         }
 
@@ -40,7 +40,7 @@ namespace DynamicReport.Mapping
         /// <param name="title">Title for field, this title will be used in report.</param>
         /// <param name="property">Expression which represent output field.</param>
         /// <returns>ReportField object</returns>
-        public ReportField Field<TProperty>(string title, Expression<Func<TSource, TProperty>> property)
+        public IReportField Field<TProperty>(string title, Expression<Func<TSource, TProperty>> property)
         {
             return GetReportField(title, Self, property);
         }
@@ -53,12 +53,12 @@ namespace DynamicReport.Mapping
         /// <param name="properties">Expressions which represents output field.</param>
         /// <param name="sqlTemplate"> Allow to set custom format for output field or provide other transformations like combining or subtraction of output fields.</param>
         /// <returns>ReportField object</returns>
-        public ReportField Field<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
+        public IReportField Field<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
         {
             return GetReportField(title, sqlTemplate, properties);
         }
 
-        public ReportDataSource GetReportDataSource()
+        public IReportDataSource GetReportDataSource()
         {
             string sql = Table();
             return new ReportDataSource(sql);
@@ -71,7 +71,7 @@ namespace DynamicReport.Mapping
         /// <returns>SQL analog of expression, format: [TableName].[ColumnName] </returns>
         public string Column<TProperty>(Expression<Func<TSource, TProperty>> exp)
         {
-            return string.Format("{0}.{1}", GetTableAlias(typeof(TSource)), EfMappingExtractor.GetSQLColumnName(exp));
+            return string.Format("{0}.{1}", GetTableAlias(typeof(TSource)), QueryExtractor.GetSQLColumnName(exp));
         }
 
         /// <summary>
@@ -81,10 +81,10 @@ namespace DynamicReport.Mapping
         /// <returns>Name of SQL table which mapped to C# Type</returns>
         public string Table()
         {
-            return string.Format("{0} {1}", EfMappingExtractor.GetSQLTableName(typeof(TSource)), GetTableAlias(typeof(TSource)));
+            return string.Format("{0} {1}", QueryExtractor.GetSQLTableName(typeof(TSource)), GetTableAlias(typeof(TSource)));
         }
 
-        private ReportField GetReportField<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] outerExpressions)
+        private IReportField GetReportField<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] outerExpressions)
         {
             var sqlValueExpression = string.Format(sqlTemplate, outerExpressions.Select(Column).ToArray());
 

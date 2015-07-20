@@ -7,6 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Web.UI.HtmlControls;
+
 namespace SchoolReport {
     
     
@@ -19,6 +21,6 @@ namespace SchoolReport {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected HtmlForm form1;
     }
 }

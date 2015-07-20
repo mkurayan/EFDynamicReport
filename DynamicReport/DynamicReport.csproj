@@ -49,16 +49,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mapping\ReportTemplate.cs" />
-    <Compile Include="Mapping\TableMapper.cs" />
+    <Compile Include="MappingHelpers\ReportTemplate.cs" />
+    <Compile Include="MappingHelpers\TableMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportException.cs" />
+    <Compile Include="Report\IReportDataSource.cs" />
+    <Compile Include="Report\IReportField.cs" />
+    <Compile Include="Report\IReportFilter.cs" />
+    <Compile Include="Report\IReportModel.cs" />
     <Compile Include="Report\ReportDataSource.cs" />
     <Compile Include="Report\ReportField.cs" />
     <Compile Include="Report\ReportFilter.cs" />
     <Compile Include="Report\ReportModel.cs" />
-    <Compile Include="SqlEngine\EFMappingExtractor.cs" />
-    <Compile Include="SqlEngine\Query.cs" />
+    <Compile Include="SqlEngine\QueryExtractor.cs" />
+    <Compile Include="SqlEngine\IQueryBuilder.cs" />
+    <Compile Include="SqlEngine\IQueryExecutor.cs" />
+    <Compile Include="SqlEngine\IQueryExtractor.cs" />
     <Compile Include="SqlEngine\QueryExecutor.cs" />
     <Compile Include="SqlEngine\QueryBuilder.cs" />
   </ItemGroup>

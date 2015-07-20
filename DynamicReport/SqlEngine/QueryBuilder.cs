@@ -7,7 +7,7 @@ using DynamicReport.Report;
 
 namespace DynamicReport.SqlEngine
 {
-    public class QueryBuilder
+    public class QueryBuilder : IQueryBuilder
     {
         private static Dictionary<FilterType, Func<string, string>> _tBag;
         private static Dictionary<FilterType, Func<string, string>> TBag 
@@ -29,10 +29,10 @@ namespace DynamicReport.SqlEngine
             }
         }
 
-        public Query BuildQuery(IEnumerable<ReportField> fields, IEnumerable<ReportFilter> filters, string dataSource)
+        public SqlCommand BuildQuery(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters, string dataSource)
         {
             //Always order report columns and filters. As result SQL will not generate different compiled plans when columns in reports have different order.
-            ReportField[] reportFields = fields.OrderBy(x => x.Title).ToArray();
+            IReportField[] reportFields = fields.OrderBy(x => x.Title).ToArray();
 
             string colsOrder = "";
             
@@ -71,11 +71,13 @@ namespace DynamicReport.SqlEngine
                 sqlQuery += string.Format(" WHERE {0}", sqlFilter);
             }
 
-            return new Query()
+            var command = new SqlCommand(sqlQuery);
+            foreach (IDataParameter dataParameter in sqlParams)
             {
-                SqlQuery = sqlQuery,
-                Parameters = sqlParams
-            };
+                command.Parameters.Add(dataParameter);
+            }
+
+            return command;
         }
 
         private static bool IsSqlCommaNeeded(string sql)

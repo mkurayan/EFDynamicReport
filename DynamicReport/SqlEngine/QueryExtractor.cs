@@ -10,13 +10,13 @@ using System.Reflection;
 namespace DynamicReport.SqlEngine
 {
     /// <summary>
-    /// Mapping Between Types & Tables
+    /// Reveal mapping Between C# Types & SQL Tables.
     /// </summary>
-    public class EFMappingExtractor
+    public class QueryExtractor : IQueryExtractor
     {
         private readonly DbContext _context;
 
-        public EFMappingExtractor(DbContext context)
+        public QueryExtractor(DbContext context)
         {
             if (context == null)
             {

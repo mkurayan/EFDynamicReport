@@ -7,9 +7,9 @@ using DynamicReport.SqlEngine;
 
 namespace DynamicReport.Report
 {
-    public class ReportModel
+    public class ReportModel : IReportModel
     {
-        public IEnumerable<ReportField> ReportFields
+        public IEnumerable<IReportField> ReportFields
         {
             get { return Fields.AsEnumerable(); }
         }
@@ -17,19 +17,19 @@ namespace DynamicReport.Report
         /// <summary>
         /// Set of fields available for report.
         /// </summary>
-        private IList<ReportField> Fields { get; set; }
+        private IList<IReportField> Fields { get; set; }
 
         /// <summary>
         /// Report SQL query.
         /// </summary>
         /// <returns></returns>
-        private ReportDataSource DataSource { get; set; }
-        
-        private readonly QueryBuilder _queryBuilder;
+        private IReportDataSource DataSource { get; set; }
 
-        private readonly QueryExecutor _queryExecutor;
+        private readonly IQueryBuilder _queryBuilder;
 
-        public ReportModel(QueryBuilder queryBuilder, QueryExecutor queryExecutor)
+        private readonly IQueryExecutor _queryExecutor;
+
+        public ReportModel(IQueryBuilder queryBuilder, IQueryExecutor queryExecutor)
         {
             if (queryBuilder == null)
             {
@@ -44,10 +44,10 @@ namespace DynamicReport.Report
             _queryBuilder = queryBuilder;
             _queryExecutor = queryExecutor;
 
-            Fields = new List<ReportField>();
+            Fields = new List<IReportField>();
         }
 
-        public void AddReportField(ReportField reportField)
+        public void AddReportField(IReportField reportField)
         {
             if (reportField == null)
             {
@@ -62,7 +62,7 @@ namespace DynamicReport.Report
             Fields.Add(reportField);
         }
 
-        public void SetDataSource(ReportDataSource dataSource)
+        public void SetDataSource(IReportDataSource dataSource)
         {
             if (dataSource == null)
             {
@@ -83,7 +83,7 @@ namespace DynamicReport.Report
         /// <param name="columns">Fields which will be included in report.</param>
         /// <param name="filters">Filters which will be applied on report.</param>
         /// <param name="hospitalId">Id of hospital for which report will be build.</param>
-        public List<Dictionary<string, object>> Get(IEnumerable<string> columns, IEnumerable<ReportFilter> filters)
+        public List<Dictionary<string, object>> Get(IEnumerable<string> columns, IEnumerable<IReportFilter> filters)
         {
             var error = Validate(columns, filters);
             if (!string.IsNullOrEmpty(error))
@@ -102,7 +102,7 @@ namespace DynamicReport.Report
         {
             var rows = new List<Dictionary<string, object>>();
 
-            var reportFields = new ReportField[dt.Columns.Count];
+            var reportFields = new IReportField[dt.Columns.Count];
 
             for (int i = 0; i < dt.Columns.Count; i++)
             {
@@ -136,7 +136,7 @@ namespace DynamicReport.Report
         /// <param name="columnsTitles">Fields which proposed for report.</param>
         /// <param name="filters">Filters which proposed for report.</param>
         /// <returns>Validation result, null if there is no validation errors.</returns>
-        private string Validate(IEnumerable<string> columnsTitles, IEnumerable<ReportFilter> filters)
+        private string Validate(IEnumerable<string> columnsTitles, IEnumerable<IReportFilter> filters)
         {
             var errors = new List<string>();
 

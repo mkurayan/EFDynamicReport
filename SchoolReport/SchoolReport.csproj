@@ -118,7 +118,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DTO.cs" />
-    <Compile Include="Models\ReportModel.cs" />
+    <Compile Include="Models\ReportsModel.cs" />
     <Compile Include="Models\SchoolReportsMapping\Fields\AgeField.cs" />
     <Compile Include="Models\SchoolReportsMapping\Fields\AverageScore.cs" />
     <Compile Include="Models\SchoolReportsMapping\Fields\MaximumScore.cs" />

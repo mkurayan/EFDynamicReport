@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Text;
 
 namespace DynamicReport.SqlEngine
 {
-    public class QueryExecutor
+    public class QueryExecutor : IQueryExecutor
     {
         private string _connectionString = "";
 
         /// <summary>
-        /// Constructor.
+        /// Create Query executor.
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         public QueryExecutor(string connectionString)
@@ -20,26 +18,25 @@ namespace DynamicReport.SqlEngine
             _connectionString = connectionString;
         }
 
-        /// <summary>
-        /// Connection string.
-        /// </summary>
         public string ConnectionString
         {
             get { return _connectionString; }
         }
 
-        public DataTable ExecuteToDataTable(Query query)
+        public DataTable ExecuteToDataTable(SqlCommand selectCommand)
         {
             SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
 
             try
             {
-                DataTable table = new DataTable();
+                //use connection to DB.
+                selectCommand.Connection = connection;
 
-                using (SqlDataAdapter adapter = new SqlDataAdapter(query.SqlQuery, connection))
+                DataTable table = new DataTable();
+                
+                using (SqlDataAdapter adapter = new SqlDataAdapter(selectCommand))
                 {
-                    adapter.SelectCommand.Parameters.AddRange(query.Parameters.ToArray());
                     adapter.Fill(table);
                 }
 
@@ -47,7 +44,7 @@ namespace DynamicReport.SqlEngine
             }
             catch (Exception e)
             {
-                string msg = GetSQLErrorString(query.SqlQuery, query.Parameters);
+                string msg = GetSQLErrorString(selectCommand.CommandText, selectCommand.Parameters);
                 throw new ReportException(msg);
             }
             finally
@@ -62,11 +59,8 @@ namespace DynamicReport.SqlEngine
         /// <param name="sql">SQL statement.</param>
         /// <param name="parameters">SQL parameters.</param>
         /// <returns>String that contains SQL statement and SQL parameters.</returns>
-        public string GetSQLErrorString(string sql, IEnumerable<IDataParameter> parameters)
+        private string GetSQLErrorString(string sql, SqlParameterCollection parameters)
         {
-            if (parameters == null)
-                parameters = Enumerable.Empty<IDataParameter>();
-
             string sqlTemplate = "SQL Command: [{0}]. ";
             string paramsTemplate = "Parameters: [{0}].";
             StringBuilder sqlParams = new StringBuilder();
