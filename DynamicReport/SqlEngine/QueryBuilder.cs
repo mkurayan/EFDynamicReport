@@ -31,17 +31,27 @@ namespace DynamicReport.SqlEngine
 
         public SqlCommand BuildQuery(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters, string dataSource)
         {
+            if (fields == null || !fields.Any())
+            {
+                throw new ReportException("Fields collection is null or empty. Impossible to build query without any output values.");
+            }
+
+            if (string.IsNullOrWhiteSpace(dataSource))
+            {
+                throw new ReportException("Report data source is null or empty. Impossible to build query without data source");
+            }
+
             //Always order report columns and filters. As result SQL will not generate different compiled plans when columns in reports have different order.
             IReportField[] reportFields = fields.OrderBy(x => x.Title).ToArray();
 
             string colsOrder = "";
-            
-            filters = filters.OrderBy(x => x.ReportFieldTitle).ThenBy(x=> x.Type).ToArray();
+
+            filters = filters != null ? filters.OrderBy(x => x.ReportFieldTitle).ThenBy(x => x.Type).ToArray() : Enumerable.Empty<IReportFilter>();
 
             foreach (var fieldDefenition in reportFields)
             {
                 if (IsSqlCommaNeeded(colsOrder))
-                    colsOrder += ",";
+                    colsOrder += ", ";
 
                 colsOrder += string.Format("({0}) AS {1}", fieldDefenition.SqlValueExpression, fieldDefenition.SqlAlias);
             }
