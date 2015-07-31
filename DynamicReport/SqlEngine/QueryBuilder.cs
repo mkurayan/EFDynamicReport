@@ -46,7 +46,7 @@ namespace DynamicReport.SqlEngine
 
             string colsOrder = "";
 
-            filters = filters != null ? filters.OrderBy(x => x.ReportFieldTitle).ThenBy(x => x.Type).ToArray() : Enumerable.Empty<IReportFilter>();
+            filters = filters != null ? filters.OrderBy(x => x.ReportField.Title).ThenBy(x => x.Type).ToArray() : Enumerable.Empty<IReportFilter>();
 
             foreach (var fieldDefenition in reportFields)
             {
@@ -60,10 +60,8 @@ namespace DynamicReport.SqlEngine
             string sqlFilter = "";
             foreach (var filter in filters)
             {
-                var fieldDefenition =  reportFields.Single(x=> x.Title == filter.ReportFieldTitle);
-
-                var formattedFilterValue = fieldDefenition.InputValueTransformation != null
-                    ? fieldDefenition.InputValueTransformation(filter.Value)
+                var formattedFilterValue = filter.ReportField.InputValueTransformation != null
+                    ? filter.ReportField.InputValueTransformation(filter.Value)
                     : filter.Value;
 
                 var parameter = GenerateDBParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
@@ -72,7 +70,7 @@ namespace DynamicReport.SqlEngine
                 if (!string.IsNullOrEmpty(sqlFilter))
                     sqlFilter += " AND ";
 
-                sqlFilter += BuildSqlFilter(filter.Type, fieldDefenition.SqlValueExpression, parameter.ParameterName);
+                sqlFilter += BuildSqlFilter(filter.Type, filter.ReportField.SqlValueExpression, parameter.ParameterName);
             }
 
             string sqlQuery = string.Format("SELECT {0} FROM {1}", colsOrder, dataSource);

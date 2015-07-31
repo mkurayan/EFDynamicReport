@@ -16,7 +16,7 @@ namespace DynamicReport.Report
         /// <summary>
         /// Part of SQL query, describes report field data source.
         /// </summary>
-        string SqlValueExpression { get; set; }
+        string SqlValueExpression { get; }
 
         /// <summary>
         /// Sql alias which will be used for current field. 
@@ -32,7 +32,7 @@ namespace DynamicReport.Report
         /// 3. Obfuscate or Encrypt sensitive data
         /// 4. Other usages...
         /// </summary>
-        Func<string, string> OutputValueTransformation { get; set; }
+        Func<string, string> OutputValueTransformation { get; }
 
         /// <summary>
         /// This transformation will be applied on user input before it will be used as filter value.
@@ -42,6 +42,6 @@ namespace DynamicReport.Report
         /// 3. Decrypt sensitive data
         /// 4. Other usages...
         /// </summary>
-        Func<string, string> InputValueTransformation { get; set; }
+        Func<string, string> InputValueTransformation { get; }
     }
 }

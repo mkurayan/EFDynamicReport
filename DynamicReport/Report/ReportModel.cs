@@ -62,6 +62,11 @@ namespace DynamicReport.Report
             Fields.Add(reportField);
         }
 
+        public IReportField GetReportField(string title)
+        {
+            return Fields.FirstOrDefault(x => x.Title == title);
+        }
+
         public void SetDataSource(IReportDataSource dataSource)
         {
             if (dataSource == null)
@@ -80,18 +85,18 @@ namespace DynamicReport.Report
         /// <summary>
         /// Process report with proposed fields and filters, return report data.
         /// </summary>
-        /// <param name="columns">Fields which will be included in report.</param>
+        /// <param name="fields">Fields which will be included in report.</param>
         /// <param name="filters">Filters which will be applied on report.</param>
         /// <param name="hospitalId">Id of hospital for which report will be build.</param>
-        public List<Dictionary<string, object>> Get(IEnumerable<string> columns, IEnumerable<IReportFilter> filters)
+        public List<Dictionary<string, object>> Get(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters)
         {
-            var error = Validate(columns, filters);
+            var error = Validate(fields, filters);
             if (!string.IsNullOrEmpty(error))
             {
                 throw new ReportException(error);
             }
 
-            var query = _queryBuilder.BuildQuery(columns.Select(x => Fields.Single(y => y.Title == x)), filters, DataSource.SqlQuery);
+            var query = _queryBuilder.BuildQuery(fields, filters, DataSource.SqlQuery);
 
             var data = _queryExecutor.ExecuteToDataTable(query);
 
@@ -133,21 +138,21 @@ namespace DynamicReport.Report
         /// <summary>
         /// Check that report can process specified fields and filters.
         /// </summary>
-        /// <param name="columnsTitles">Fields which proposed for report.</param>
+        /// <param name="fields">Fields which proposed for report.</param>
         /// <param name="filters">Filters which proposed for report.</param>
         /// <returns>Validation result, null if there is no validation errors.</returns>
-        private string Validate(IEnumerable<string> columnsTitles, IEnumerable<IReportFilter> filters)
+        private string Validate(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters)
         {
             var errors = new List<string>();
 
-            if (!columnsTitles.Any())
+            if (!fields.Any())
             {
                 errors.Add("Report must have at least one output column.");
             }
 
-            foreach (var field in columnsTitles)
+            foreach (var field in fields)
             {
-                if (Fields.All(x => x.Title != field))
+                if (!Fields.Contains(field))
                 {
                     errors.Add("Unknow report filed: " + field);
                 }
@@ -155,9 +160,9 @@ namespace DynamicReport.Report
 
             foreach (var filter in filters)
             {
-                if (Fields.All(x => x.Title != filter.ReportFieldTitle))
+                if (!Fields.Contains(filter.ReportField))
                 {
-                    errors.Add("Unknow report filter, field: " + filter.ReportFieldTitle);
+                    errors.Add("Unknow report filter, field: " + filter.ReportField.Title);
                 }
             }
 

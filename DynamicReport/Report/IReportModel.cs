@@ -8,8 +8,10 @@ namespace DynamicReport.Report
 
         void AddReportField(IReportField reportField);
 
+        IReportField GetReportField(string title);
+
         void SetDataSource(IReportDataSource dataSource);
 
-        List<Dictionary<string, object>> Get(IEnumerable<string> columns, IEnumerable<IReportFilter> filters);
+        List<Dictionary<string, object>> Get(IEnumerable<IReportField> columns, IEnumerable<IReportFilter> filters);
     }
 }

@@ -80,12 +80,15 @@ namespace SchoolReport.Models
 
         public List<Dictionary<string, object>> GetReportData(ReportDTO reportDto)
         {
-            return Report.Get(reportDto.Columns, reportDto.Filters.Select(x => new ReportFilter()
+            var fields = reportDto.Columns.Select(title => Report.GetReportField(title));
+            var filters = reportDto.Filters.Select(filter => new ReportFilter
             {
-                ReportFieldTitle = x.ReportFieldTitle,
-                Type = (FilterType)x.FilterType,
-                Value = x.FilterValue
-            }));
+                ReportField = Report.GetReportField(filter.ReportFieldTitle),
+                Type = (FilterType)filter.FilterType,
+                Value = filter.FilterValue
+            });
+
+            return Report.Get(fields, filters);
         }
     }
 

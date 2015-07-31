@@ -100,7 +100,11 @@ namespace DynamicReport.Tests.SqlEngine
             {
                 new ReportFilter
                 {
-                    ReportFieldTitle = "First Field",
+                    ReportField = new ReportField
+                    {
+                        Title = "First Field",
+                        SqlValueExpression = "TestTable.fField",
+                    },
                     Type = filterType,
                     Value = "SomeValue"
                 }
@@ -124,14 +128,22 @@ namespace DynamicReport.Tests.SqlEngine
             {
                 new ReportFilter
                 {
-                    ReportFieldTitle = "First Field",
+                    ReportField = new ReportField
+                    {
+                        Title = "First Field",
+                        SqlValueExpression = "TestTable.fField"
+                    },
                     Type = FilterType.NotEqual,
                     Value = "SomeValue"
                 },
 
                 new ReportFilter
                 {
-                    ReportFieldTitle = "First Field",
+                    ReportField = new ReportField
+                    {
+                        Title = "First Field",
+                        SqlValueExpression = "TestTable.fField"
+                    },
                     Type = FilterType.NotEqual,
                     Value = "AnotherValue"
                 }
