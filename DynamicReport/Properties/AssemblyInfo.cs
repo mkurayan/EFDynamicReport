@@ -7,9 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DynamicReport")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard")]
 [assembly: AssemblyProduct("DynamicReport")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

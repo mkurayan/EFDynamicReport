@@ -64,7 +64,7 @@ namespace DynamicReport.SqlEngine
                     ? filter.ReportField.InputValueTransformation(filter.Value)
                     : filter.Value;
 
-                var parameter = GenerateDBParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
+                var parameter = GenerateDbParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
                 sqlParams.Add(parameter);
 
                 if (!string.IsNullOrEmpty(sqlFilter))
@@ -141,7 +141,7 @@ namespace DynamicReport.SqlEngine
             return sqlValueExpression + sqlOperator + sqlpParameterName;
         }
 
-        private static IDataParameter GenerateDBParameter(string parameterName, object parameterValue, SqlDbType parameterType)
+        private static IDataParameter GenerateDbParameter(string parameterName, object parameterValue, SqlDbType parameterType)
         {
             if (string.IsNullOrEmpty(parameterName) || parameterValue == null)
                 throw new ArgumentException();

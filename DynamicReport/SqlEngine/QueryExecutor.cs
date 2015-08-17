@@ -15,6 +15,11 @@ namespace DynamicReport.SqlEngine
         /// <param name="connectionString">Connection string.</param>
         public QueryExecutor(string connectionString)
         {
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new ArgumentException(connectionString);
+            }
+
             _connectionString = connectionString;
         }
 
@@ -42,7 +47,7 @@ namespace DynamicReport.SqlEngine
 
                 return table;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 string msg = GetSQLErrorString(selectCommand.CommandText, selectCommand.Parameters);
                 throw new ReportException(msg);
