@@ -8,7 +8,7 @@ namespace DynamicReport.Report
 
         public ReportDataSource(string sqlQuery)
         {
-            if (string.IsNullOrEmpty(sqlQuery))
+            if (string.IsNullOrWhiteSpace(sqlQuery))
             {
                 throw new ArgumentNullException("sqlQuery");
             }
