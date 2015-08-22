@@ -185,5 +185,22 @@ namespace DynamicReport.Tests.Report
 
             Assert.That(a.GetHashCode(), Is.Not.EqualTo(b.GetHashCode()));
         }
+
+        [Test]
+        public void Equals_Symmetric()
+        {
+            var x = new ReportField()
+            {
+                Title = "Field A",
+                SqlValueExpression = "select 1"
+            };
+            var y = new ReportField()
+            {
+                Title = "Field A",
+                SqlValueExpression = "select 1"
+            };
+            Assert.IsTrue(x.Equals(y) && y.Equals(x));
+            Assert.IsTrue(x.GetHashCode() == y.GetHashCode());
+        }
     }
 }
