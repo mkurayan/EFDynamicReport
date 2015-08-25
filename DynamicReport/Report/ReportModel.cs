@@ -82,25 +82,98 @@ namespace DynamicReport.Report
             DataSource = dataSource;
         }
         
-        /// <summary>
-        /// Process report with proposed fields and filters, return report data.
-        /// </summary>
-        /// <param name="fields">Fields which will be included in report.</param>
-        /// <param name="filters">Filters which will be applied on report.</param>
-        /// <param name="hospitalId">Id of hospital for which report will be build.</param>
         public List<Dictionary<string, object>> Get(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters)
         {
-            var error = Validate(fields, filters);
-            if (!string.IsNullOrEmpty(error))
+            if (fields == null)
             {
-                throw new ReportException(error);
+                throw new ArgumentNullException("fields");
             }
 
+            if (filters == null)
+            {
+                throw new ArgumentNullException("filters");
+            }
+
+            var errors = Validate(fields, filters);
+            if (errors.Length > 0)
+            {
+                string errorMessage = FormatReportErrors(errors);
+                throw new ReportException(errorMessage);
+            }
+
+            //ToDo: check that DataSource not null!!!
             var query = _queryBuilder.BuildQuery(fields, filters, DataSource.SqlQuery);
 
             var data = _queryExecutor.ExecuteToDataTable(query);
 
             return GetJson(data);
+        }
+
+        /// <summary>
+        /// Check that report can process specified fields and filters.
+        /// </summary>
+        /// <param name="fields">Fields which proposed for report.</param>
+        /// <param name="filters">Filters which proposed for report.</param>
+        /// <returns>Array with errors.</returns>
+        public string[] Validate(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters)
+        {
+            var errors = new List<string>();
+
+            /****************************
+             *  1. Validate ReportModel *
+             ****************************/
+            if (!ReportFields.Any())
+            {
+                errors.Add("ReportModel do not contains any ReportFields inside");
+            }
+
+            if (DataSource == null)
+            {
+                errors.Add("DataSource for ReportModel not specified");
+            }
+
+            /****************************
+             *  2. Validate Inputs       *
+             ****************************/
+            
+            if (!fields.Any())
+            {
+                errors.Add("Report must have at least one output column.");
+            }
+
+            foreach (var field in fields)
+            {
+                if (!Fields.Contains(field))
+                {
+                    errors.Add("Unknow report filed: " + field.Title);
+                }
+            }
+
+            foreach (var filter in filters)
+            {
+                if (!Fields.Contains(filter.ReportField))
+                {
+                    errors.Add("Unknow report filter, field: " + filter.ReportField.Title);
+                }
+            }
+
+            return errors.ToArray();
+        }
+
+        private string FormatReportErrors(string[] errors)
+        {
+            if (errors.Length == 0)
+                return string.Empty;
+
+            StringBuilder error = new StringBuilder();
+
+            error.AppendLine(string.Format("Сan not build a report for the specified data. Errors count: {0}", errors.Length));
+            for (var i = 0; i < errors.Length; i++)
+            {
+                error.AppendLine(string.Format("{0}: {1}", i, errors[i]));
+            }
+
+            return error.ToString();
         }
 
         private List<Dictionary<string, object>> GetJson(DataTable dt)
@@ -133,49 +206,6 @@ namespace DynamicReport.Report
             }
 
             return rows;
-        }
-
-        /// <summary>
-        /// Check that report can process specified fields and filters.
-        /// </summary>
-        /// <param name="fields">Fields which proposed for report.</param>
-        /// <param name="filters">Filters which proposed for report.</param>
-        /// <returns>Validation result, null if there is no validation errors.</returns>
-        private string Validate(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters)
-        {
-            var errors = new List<string>();
-
-            if (!fields.Any())
-            {
-                errors.Add("Report must have at least one output column.");
-            }
-
-            foreach (var field in fields)
-            {
-                if (!Fields.Contains(field))
-                {
-                    errors.Add("Unknow report filed: " + field);
-                }
-            }
-
-            foreach (var filter in filters)
-            {
-                if (!Fields.Contains(filter.ReportField))
-                {
-                    errors.Add("Unknow report filter, field: " + filter.ReportField.Title);
-                }
-            }
-
-            if (!errors.Any()) return null;
-
-            StringBuilder error = new StringBuilder();
-            error.AppendLine("Value of a fields or filters column is outside the allowable range of values.");
-            foreach (var err in errors)
-            {
-                error.AppendLine(err);
-            }
-
-            return error.ToString();
         }
     }
 }

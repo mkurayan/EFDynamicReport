@@ -2,7 +2,6 @@
 
 namespace DynamicReport.Demo.DB.Entities
 {
-    //ToDo: Implement mapping in separate class????
     public class ExamenResult
     {
         [Key]
