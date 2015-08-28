@@ -10,29 +10,29 @@
         filters: [],
         columns: [],
 
-        addColumnToTeport: function (fieldDefenition) {
-            if (kendoMvvmHelper.findIndex(this.columns, "title", fieldDefenition.title) > -1) {
-                alert("Field is already added");
+        addColumnToTeport: function (columnDefenition) {
+            if (kendoMvvmHelper.findIndex(this.columns, "title", columnDefenition.title) > -1) {
+                alert("Column is already added");
             } else {
-                this.columns.push(fieldDefenition);
+                this.columns.push(columnDefenition);
                 this.trigger("change", { field: "columns" });
             }
         },
 
-        removeColumnFromReport: function (fieldDefenition) {
-            var index = kendoMvvmHelper.findIndex(this.columns, "title", fieldDefenition.title);
+        removeColumnFromReport: function (columnDefenition) {
+            var index = kendoMvvmHelper.findIndex(this.columns, "title", columnDefenition.title);
             if (index > -1) {
-                var reportfield = this.columns[index];
+                var reportColumn = this.columns[index];
                 this.columns.splice(index, 1);
                 this.trigger("change", { field: "columns" });
 
-                //if columns do not contains current field defenition we will remove all filters releated to this field.
-                if (kendoMvvmHelper.findIndex(this.columns, "title", fieldDefenition.title) !== -1) {
+                //if columns do not contains current column defenition we will remove all filters releated to this column.
+                if (kendoMvvmHelper.findIndex(this.columns, "title", columnDefenition.title) !== -1) {
                     return;
                 }
 
-                while (kendoMvvmHelper.findIndex(this.filters, "reportFieldTitle", reportfield.title) > -1) {
-                    this.filters.splice(kendoMvvmHelper.findIndex(this.filters, "reportFieldTitle", reportfield.title), 1);
+                while (kendoMvvmHelper.findIndex(this.filters, "reportColumnTitle", reportColumn.title) > -1) {
+                    this.filters.splice(kendoMvvmHelper.findIndex(this.filters, "reportColumnTitle", reportColumn.title), 1);
                 }
             }
         },
@@ -44,7 +44,7 @@
                 return;
             }
 
-            filterDefenition.hashCode = this._hashCode(filterDefenition.reportFieldTitle + filterDefenition.filterTitle + filterDefenition.filterValue);
+            filterDefenition.hashCode = this._hashCode(filterDefenition.reportColumnTitle + filterDefenition.filterTitle + filterDefenition.filterValue);
 
             if (kendoMvvmHelper.findIndex(this.filters, "hashCode", filterDefenition.hashCode) > -1) {
                 alert("Filter is already added");
@@ -61,8 +61,8 @@
         },
 
         _validateProposedFilter: function (filterDefenition) {
-            if (filterDefenition.reportFieldTitle === "")
-                return "Please Select Filter field";
+            if (filterDefenition.reportColumnTitle === "")
+                return "Please Select Filter column";
 
             if (!filterDefenition.filterType)
                 return "Please Select Filter operator";
@@ -70,7 +70,7 @@
             if (filterDefenition.filterValue === "")
                 return "Please Enter Filter text";
 
-            var columnDefenition = kendoMvvmHelper.findElement(this.columns, "title", filterDefenition.reportFieldTitle);
+            var columnDefenition = kendoMvvmHelper.findElement(this.columns, "title", filterDefenition.reportColumnTitle);
 
             if (columnDefenition == null)
                 return "You can not add a filter to a column that is not in the report";
@@ -107,16 +107,16 @@
         },
         
         addReportColumn: function (e) {
-            this._addFieldToReport(this.columnSelectedField);
+            this._addColumnToReport(this.columnSelectedField);
         },
 
         removeReportColumn: function (e) {
-            this._removeFieldFromReport(e.currentTarget.getAttribute("data-report-field"));
+            this._removeColumnFromReport(e.currentTarget.getAttribute("data-report-column"));
         },
 
         addReportFilter: function () {
             var filterDefenition = {
-                reportFieldTitle: this.filterSelectedField,
+                reportColumnTitle: this.filterSelectedField,
                 filterType: this.filterSelectedOperator,
                 filterValue: this.filterValue
             };
@@ -139,20 +139,20 @@
             this._buildReport();
         },
 
-        _addFieldToReport: function (fieldTitle) {
-            var fieldDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, "title", fieldTitle);
+        _addColumnToReport: function (columnTitle) {
+            var columnDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, "title", columnTitle);
 
-            if (fieldDefenition) {
-                this.reportModel.addColumnToTeport(fieldDefenition);
+            if (columnDefenition) {
+                this.reportModel.addColumnToTeport(columnDefenition);
             } else {
-                alert("Column defenition was not found. Title: " + fieldTitle);
+                alert("Column defenition was not found. Title: " + columnTitle);
             }
 
             this._trigerChangeReportModelEvents();
         },
 
-        _removeFieldFromReport: function (fieldTitle) {
-            var columnDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, "title", fieldTitle);
+        _removeColumnFromReport: function (columnTitle) {
+            var columnDefenition = kendoMvvmHelper.findElement(this.reportColumnsAvailableForReportFocus, "title", columnTitle);
 
             if (columnDefenition) {
                 this.reportModel.removeColumnFromReport(columnDefenition);
@@ -180,7 +180,7 @@
         _getReportModelForWebApi: function () {
             var reportFilters = this.reportModel.filters.map(function (element) {
                 return {
-                    reportFieldTitle: element.reportFieldTitle,
+                    reportColumnTitle: element.reportColumnTitle,
                     filterValue: element.filterValue,
                     filterType: element.filterType
                 }
@@ -209,20 +209,20 @@
                 };
 
                 that.reportModel.columns.forEach(function (element) {
-                    gridConiguration.columns.push(that._getKendoGridField(element));
+                    gridConiguration.columns.push(that._getKendoGridColumn(element));
                 });
 
                 reportGrid.ShowGrid(gridConiguration, data);
             });
         },
 
-        _getKendoGridField: function (element) {
-            var field = {
+        _getKendoGridColumn: function (element) {
+            var column = {
                 field: element.alias,
                 title: element.title
             };
 
-            return field;
+            return column;
         },
 
         _trigerChangeReportModelEvents: function () {

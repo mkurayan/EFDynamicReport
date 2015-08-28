@@ -3,7 +3,7 @@ using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
 
-namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
+namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 {
     public class MaximumScore
     {
@@ -30,9 +30,9 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
             }
         }
 
-        public IReportField Field(string title)
+        public IReportColumn Column(string title)
         {
-            return new ReportField
+            return new ReportColumn
             {
                 Title = title,
                 SqlValueExpression = SqlValueExpression

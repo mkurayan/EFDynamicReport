@@ -3,9 +3,9 @@ using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
 
-namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
+namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 {
-    public class SubjectsField
+    public class Subjects
     {
         //Inner tables
         private TableMapper<Subject> sb;
@@ -14,7 +14,7 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
         //Outer tables
         private TableMapper<Student> S;
 
-        public SubjectsField(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
+        public Subjects(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {
             sb = new TableMapper<Subject>(queryExtractor);
             e = new TableMapper<ExamenResult>(queryExtractor);
@@ -34,9 +34,9 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
             }
         }
 
-        public IReportField Field(string title)
+        public IReportColumn Column(string title)
         {
-            return new ReportField
+            return new ReportColumn
             {
                 Title = title,
                 SqlValueExpression = SqlValueExpression

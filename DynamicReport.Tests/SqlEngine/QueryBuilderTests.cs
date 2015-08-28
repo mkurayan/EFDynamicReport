@@ -11,7 +11,7 @@ namespace DynamicReport.Tests.SqlEngine
     class QueryBuilderTests
     {
         private QueryBuilder queryBuilder;
-        private IEnumerable<IReportField> _reportFields;
+        private IEnumerable<IReportColumn> _reportColumns;
         private string _dataSource = "TestTable";
             
         [SetUp]
@@ -19,9 +19,9 @@ namespace DynamicReport.Tests.SqlEngine
         {
            queryBuilder = new QueryBuilder();
 
-           _reportFields = new IReportField[]
+           _reportColumns = new IReportColumn[]
            {
-               new ReportField
+               new ReportColumn
                {
                    Title = "First Field",
                    SqlValueExpression = "TestTable.fField",
@@ -30,17 +30,17 @@ namespace DynamicReport.Tests.SqlEngine
         }
 
         [Test]
-        public void BuildQuery_ReportFieldsCollectionNullOrEmpty_ReportExceptionThrown()
+        public void BuildQuery_ReportColumnsCollectionNullOrEmpty_ReportExceptionThrown()
         {
             Assert.Throws(typeof (ReportException),
                 () => queryBuilder.BuildQuery(null, Enumerable.Empty<IReportFilter>(), _dataSource));
         }
 
         [Test]
-        public void BuildQuery_EmptyReportFieldsCollection_ReportExceptionThrown()
+        public void BuildQuery_EmptyReportColumnsCollection_ReportExceptionThrown()
         {
             Assert.Throws(typeof (ReportException),
-                () => queryBuilder.BuildQuery(Enumerable.Empty<IReportField>(), Enumerable.Empty<IReportFilter>(), _dataSource));
+                () => queryBuilder.BuildQuery(Enumerable.Empty<IReportColumn>(), Enumerable.Empty<IReportFilter>(), _dataSource));
         }
 
         [TestCase(null)]
@@ -48,36 +48,36 @@ namespace DynamicReport.Tests.SqlEngine
         public void BuildQuery_ReportDataSourceNotProvided_ReportExceptionThrown(string dataSource)
         {
              Assert.Throws(typeof (ReportException),
-                 () => queryBuilder.BuildQuery(_reportFields, Enumerable.Empty<IReportFilter>(), dataSource));
+                 () => queryBuilder.BuildQuery(_reportColumns, Enumerable.Empty<IReportFilter>(), dataSource));
         }
 
         [Test]
         public void BuildQuery_GivenSingleReportField_ValidSqlCommand()
         {
-            SqlCommand command = queryBuilder.BuildQuery(_reportFields, Enumerable.Empty<IReportFilter>(), _dataSource);
+            SqlCommand command = queryBuilder.BuildQuery(_reportColumns, Enumerable.Empty<IReportFilter>(), _dataSource);
 
             Assert.That(command.CommandText, Is.EqualTo("SELECT (TestTable.fField) AS FirstField FROM TestTable"));
             Assert.That(command.Parameters.Count, Is.EqualTo(0));
         }
 
         [Test]
-        public void BuildQuery_GivenMultipleReportFields_ValidSqlCommand()
+        public void BuildQuery_GivenMultipleReportColumns_ValidSqlCommand()
         {
-            var reportFields = new IReportField[]
+            var reportColumns = new IReportColumn[]
             {
-                new ReportField
+                new ReportColumn
                 {
                     Title = "First Field",
                     SqlValueExpression = "TestTable.fField",
                 },
-                new ReportField
+                new ReportColumn
                 {
                     Title = "Second Field",
                     SqlValueExpression = "TestTable.sField",
                 },
             };
 
-            SqlCommand command = queryBuilder.BuildQuery(reportFields, Enumerable.Empty<IReportFilter>(), _dataSource);
+            SqlCommand command = queryBuilder.BuildQuery(reportColumns, Enumerable.Empty<IReportFilter>(), _dataSource);
 
             Assert.That(command.CommandText, Is.EqualTo("SELECT (TestTable.fField) AS FirstField, (TestTable.sField) AS SecondField FROM TestTable"));
             Assert.That(command.Parameters.Count, Is.EqualTo(0));
@@ -97,7 +97,7 @@ namespace DynamicReport.Tests.SqlEngine
             {
                 new ReportFilter
                 {
-                    ReportField = new ReportField
+                    ReportColumn = new ReportColumn
                     {
                         Title = "First Field",
                         SqlValueExpression = "TestTable.fField",
@@ -107,7 +107,7 @@ namespace DynamicReport.Tests.SqlEngine
                 }
             };
 
-            SqlCommand command = queryBuilder.BuildQuery(_reportFields, reportFilters, _dataSource);
+            SqlCommand command = queryBuilder.BuildQuery(_reportColumns, reportFilters, _dataSource);
 
             var expectedSql = string.Format("SELECT (TestTable.fField) AS FirstField FROM TestTable WHERE {0}", expectedSqlExpression);
 
@@ -125,7 +125,7 @@ namespace DynamicReport.Tests.SqlEngine
             {
                 new ReportFilter
                 {
-                    ReportField = new ReportField
+                    ReportColumn = new ReportColumn
                     {
                         Title = "First Field",
                         SqlValueExpression = "TestTable.fField"
@@ -136,7 +136,7 @@ namespace DynamicReport.Tests.SqlEngine
 
                 new ReportFilter
                 {
-                    ReportField = new ReportField
+                    ReportColumn = new ReportColumn
                     {
                         Title = "First Field",
                         SqlValueExpression = "TestTable.fField"
@@ -146,7 +146,7 @@ namespace DynamicReport.Tests.SqlEngine
                 }
             };
 
-            SqlCommand command = queryBuilder.BuildQuery(_reportFields, reportFilters, _dataSource);
+            SqlCommand command = queryBuilder.BuildQuery(_reportColumns, reportFilters, _dataSource);
 
             var expectedSql = "SELECT (TestTable.fField) AS FirstField FROM TestTable WHERE isnull(TestTable.fField,'') != @p0 AND isnull(TestTable.fField,'') != @p1";
 

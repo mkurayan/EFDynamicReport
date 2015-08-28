@@ -7,9 +7,9 @@
     public interface IReportFilter
     {
         /// <summary>
-        /// Target report field.
+        /// Target report column.
         /// </summary>
-        IReportField ReportField { get; set; }
+        IReportColumn ReportColumn { get; set; }
 
         /// <summary>
         /// Type of the filter.

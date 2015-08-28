@@ -22,60 +22,60 @@ namespace DynamicReport.Tests.Report
         }
 
         [Test]
-        public void AddReportField_GivenNullValue_ThrownArgumentNullException()
+        public void AddReportColumn_GivenNullValue_ThrownArgumentNullException()
         {
             Assert.Throws(typeof (ArgumentNullException),
                 () =>
                 {
-                    _reportModel.AddReportField(null);
+                    _reportModel.AddReportColumn(null);
                 });
         }
 
         [Test]
-        public void AddReportField_GivenDuplicateFields_ThrownArgumentNullException()
+        public void AddReportColumn_GivenDuplicateColumns_ThrownArgumentNullException()
         {
-            _reportModel.AddReportField(new ReportField(){Title = "Field A"});
+            _reportModel.AddReportColumn(new ReportColumn(){Title = "Column A"});
 
             Assert.Throws(typeof(ReportException),
                 () =>
                 {
-                    _reportModel.AddReportField(new ReportField() { Title = "Field A" });
+                    _reportModel.AddReportColumn(new ReportColumn() { Title = "Column A" });
                 });
         }
 
         [Test]
-        public void AddReportField_GivenSeveralValidFields_FieldsSuccessfullyAddedToReportModel()
+        public void AddReportColumn_GivenSeveralValidColumns_ColumnsSuccessfullyAddedToReportModel()
         {
-            _reportModel.AddReportField(new ReportField() { Title = "Field A" });
-            _reportModel.AddReportField(new ReportField() { Title = "Field B" });
+            _reportModel.AddReportColumn(new ReportColumn() { Title = "Column A" });
+            _reportModel.AddReportColumn(new ReportColumn() { Title = "Column B" });
 
-            Assert.That(_reportModel.ReportFields.Count(), Is.EqualTo(2));
+            Assert.That(_reportModel.ReportColumns.Count(), Is.EqualTo(2));
 
-            Assert.That(_reportModel.ReportFields.First().Title, Is.EqualTo("Field A"));
-            Assert.That(_reportModel.ReportFields.Last().Title, Is.EqualTo("Field B"));
+            Assert.That(_reportModel.ReportColumns.First().Title, Is.EqualTo("Column A"));
+            Assert.That(_reportModel.ReportColumns.Last().Title, Is.EqualTo("Column B"));
         }
 
         [Test]
-        public void GetReportField_GivenReportFieldTitle_ReportFieldReturned()
+        public void GetReportColumn_GivenReportColumnTitle_ReportColumnReturned()
         {
-            _reportModel.AddReportField(new ReportField() { Title = "Field A" });
-            _reportModel.AddReportField(new ReportField() { Title = "Field B" });
+            _reportModel.AddReportColumn(new ReportColumn() { Title = "Column A" });
+            _reportModel.AddReportColumn(new ReportColumn() { Title = "Column B" });
 
-            var reportField = _reportModel.GetReportField("Field A");
+            var reportColumn = _reportModel.GetReportColumn("Column A");
             
-            Assert.NotNull(reportField);
-            Assert.That(reportField.Title, Is.EqualTo("Field A"));
+            Assert.NotNull(reportColumn);
+            Assert.That(reportColumn.Title, Is.EqualTo("Column A"));
         }
 
         [Test]
-        public void GetReportField_GivenUnknownReportFieldTitle_NullReturned()
+        public void GetReportColumn_GivenUnknownReportColumnTitle_NullReturned()
         {
-            _reportModel.AddReportField(new ReportField() { Title = "Field A" });
-            _reportModel.AddReportField(new ReportField() { Title = "Field B" });
+            _reportModel.AddReportColumn(new ReportColumn() { Title = "Column A" });
+            _reportModel.AddReportColumn(new ReportColumn() { Title = "Column B" });
 
-            var reportField = _reportModel.GetReportField("Field C");
+            var reportColumn = _reportModel.GetReportColumn("Column C");
 
-            Assert.Null(reportField);
+            Assert.Null(reportColumn);
         }
 
 
@@ -121,27 +121,27 @@ namespace DynamicReport.Tests.Report
             Assert.Throws(typeof(ArgumentNullException),
               () =>
               {
-                  _reportModel.Get(Enumerable.Empty<IReportField>(), null);
+                  _reportModel.Get(Enumerable.Empty<IReportColumn>(), null);
               });
         }
 
         [Test]
-        public void Validate_GivenEmptyReportFieldsColection_ThrownReportException()
+        public void Validate_GivenEmptyReportColumnsColection_ThrownReportException()
         {
-            _reportModel.AddReportField(new ReportField()
+            _reportModel.AddReportColumn(new ReportColumn()
             {
-                Title = "Field A",
+                Title = "Column A",
                 SqlValueExpression = "select A"
             });
             _reportModel.SetDataSource(new ReportDataSource("select * from ..."));
 
 
-            var fields = Enumerable.Empty<IReportField>();
+            var columns = Enumerable.Empty<IReportColumn>();
             var filters = Enumerable.Empty<IReportFilter>();
 
             const string expectedError = "Report must have at least one output column.";
             
-            var errors = _reportModel.Validate(fields, filters);
+            var errors = _reportModel.Validate(columns, filters);
 
             Assert.That(errors.Length, Is.EqualTo(1));
             Assert.That(errors[0], Is.EqualTo(expectedError));
@@ -149,36 +149,36 @@ namespace DynamicReport.Tests.Report
             var exception = Assert.Throws(typeof(ReportException),
               () =>
               {
-                  _reportModel.Get(fields, filters);
+                  _reportModel.Get(columns, filters);
               });
 
             Assert.True(exception.Message.Contains(expectedError));
         }
 
         [Test]
-        public void Validate_GivenUnknownReportField_ThrownReportException()
+        public void Validate_GivenUnknownReportColumn_ThrownReportException()
         {
-            //Set collection of available for report fields
-            _reportModel.AddReportField(new ReportField()
+            //Set collection of available for report columns
+            _reportModel.AddReportColumn(new ReportColumn()
             {
-                Title = "Field A",
+                Title = "Column A",
                 SqlValueExpression = "select A"
             });
             _reportModel.SetDataSource(new ReportDataSource("select * from ..."));
 
-            var fields = new List<IReportField>()
+            var columns = new List<IReportColumn>()
             {
-                new ReportField()
+                new ReportColumn()
                 {
-                    Title = "Unknown Field",
+                    Title = "Unknown Column",
                     SqlValueExpression = "select B"
                 }
             };
             var filters = Enumerable.Empty<IReportFilter>();
 
-            const string expectedError = "Unknow report filed: Unknown Field";
+            const string expectedError = "Unknow report column: Unknown Column";
 
-            var errors = _reportModel.Validate(fields, filters);
+            var errors = _reportModel.Validate(columns, filters);
 
             Assert.That(errors.Length, Is.EqualTo(1));
             Assert.That(errors[0], Is.EqualTo(expectedError));
@@ -186,7 +186,7 @@ namespace DynamicReport.Tests.Report
             var exception = Assert.Throws(typeof(ReportException),
               () =>
               {
-                  _reportModel.Get(fields, filters);
+                  _reportModel.Get(columns, filters);
               });
 
             Assert.True(exception.Message.Contains(expectedError));
@@ -195,20 +195,20 @@ namespace DynamicReport.Tests.Report
         [Test]
         public void Validate_GivenUnknownReportFilter_ThrownReportException()
         {
-            //Set collection of available for report fields
-            _reportModel.AddReportField(new ReportField()
+            //Set collection of available for report columns
+            _reportModel.AddReportColumn(new ReportColumn()
             {
-                Title = "Field A",
+                Title = "Column A",
                 SqlValueExpression = "select A"
             });
             _reportModel.SetDataSource(new ReportDataSource("select * from ..."));
 
 
-            var fields = new List<IReportField>()
+            var columns = new List<IReportColumn>()
             {
-                new ReportField()
+                new ReportColumn()
                 {
-                    Title = "Field A",
+                    Title = "Column A",
                     SqlValueExpression = "select A"
                 }
             };
@@ -216,9 +216,9 @@ namespace DynamicReport.Tests.Report
             {
                 new ReportFilter()
                 {
-                    ReportField = new ReportField()
+                    ReportColumn = new ReportColumn()
                     {
-                        Title = "Unknown Field",
+                        Title = "Unknown Column",
                         SqlValueExpression = "select B"
                     },
                     Type = FilterType.Equal,
@@ -226,9 +226,9 @@ namespace DynamicReport.Tests.Report
                 }
             };
 
-            const string expectedError = "Unknow report filter, field: Unknown Field";
+            const string expectedError = "Unknow report filter, column: Unknown Column";
 
-            var errors = _reportModel.Validate(fields, filters);
+            var errors = _reportModel.Validate(columns, filters);
 
             Assert.That(errors.Length, Is.EqualTo(1));
             Assert.That(errors[0], Is.EqualTo(expectedError));
@@ -236,7 +236,7 @@ namespace DynamicReport.Tests.Report
             var exception = Assert.Throws(typeof(ReportException),
               () =>
               {
-                  _reportModel.Get(fields, filters);
+                  _reportModel.Get(columns, filters);
               });
 
             Assert.True(exception.Message.Contains(expectedError));
@@ -251,44 +251,44 @@ namespace DynamicReport.Tests.Report
         [Test]
         public void Get_ValidInputs_ReportReturned()
         {
-            var fields = new List<IReportField>()
+            var columns = new List<IReportColumn>()
             {
-                new ReportField()
+                new ReportColumn()
                 {
-                    Title = "Field A",
+                    Title = "Column A",
                     SqlValueExpression = "select A"
                 }
             };
             var filters = Enumerable.Empty<IReportFilter>();
             string dataSource = "select * from ...";
 
-            var sqlCommand = new SqlCommand("select FieldA from ....");
+            var sqlCommand = new SqlCommand("select ColumnA from ....");
             DataTable reportTable = new DataTable();
-            reportTable.Columns.Add("FieldA");
+            reportTable.Columns.Add("ColumnA");
             reportTable.Rows.Add("Row #1");
             reportTable.Rows.Add("Row #2");
 
             var queryBuilder = new Mock<IQueryBuilder>();
-            queryBuilder.Setup(x => x.BuildQuery(fields, filters, dataSource)).Returns(sqlCommand);
+            queryBuilder.Setup(x => x.BuildQuery(columns, filters, dataSource)).Returns(sqlCommand);
 
             var queryExecutor = new Mock<IQueryExecutor>();
             queryExecutor.Setup(x => x.ExecuteToDataTable(sqlCommand)).Returns(reportTable);
 
             var reportModel = new ReportModel(queryBuilder.Object, queryExecutor.Object);
-            reportModel.AddReportField(fields.First());
+            reportModel.AddReportColumn(columns.First());
             reportModel.SetDataSource(new ReportDataSource("select * from ..."));
 
-            var result = reportModel.Get(fields, filters);
+            var result = reportModel.Get(columns, filters);
 
             Assert.That(result.Count, Is.EqualTo(2));
 
             Assert.That(result[0].Count, Is.EqualTo(1));
-            Assert.True(result[0].ContainsKey("FieldA"));
-            Assert.That(result[0]["FieldA"], Is.EqualTo("Row #1"));
+            Assert.True(result[0].ContainsKey("ColumnA"));
+            Assert.That(result[0]["ColumnA"], Is.EqualTo("Row #1"));
 
             Assert.That(result[1].Count, Is.EqualTo(1));
-            Assert.True(result[1].ContainsKey("FieldA"));
-            Assert.That(result[1]["FieldA"], Is.EqualTo("Row #2"));
+            Assert.True(result[1].ContainsKey("ColumnA"));
+            Assert.That(result[1]["ColumnA"], Is.EqualTo("Row #2"));
         }
     }
 }

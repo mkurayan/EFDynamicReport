@@ -2,7 +2,7 @@
 {
     public class ReportFilter : IReportFilter
     {
-        public IReportField ReportField { get; set; }
+        public IReportColumn ReportColumn { get; set; }
 
         public FilterType Type { get; set; }
 

@@ -6,6 +6,6 @@ namespace DynamicReport.SqlEngine
 {
     public interface IQueryBuilder
     {
-        SqlCommand BuildQuery(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters, string dataSource);
+        SqlCommand BuildQuery(IEnumerable<IReportColumn> columns, IEnumerable<IReportFilter> filters, string dataSource);
     }
 }

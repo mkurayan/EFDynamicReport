@@ -38,11 +38,11 @@
                             }"
                 />
             <br/>
-            <p><strong>Fields</strong></p>
+            <p><strong>Columns</strong></p>
             <ul data-bind="source: reportModel.columns" data-template="reportColumn"></ul>
 
             <ul data-bind="visible: noColumnsSelectedForReport">
-                <li class="msg">Add Fields above</li>   
+                <li class="msg">Add Columns above</li>   
             </ul>
         </div>
     </div>
@@ -101,13 +101,13 @@
     <script type="text/x-kendo-template" id="reportColumn">
         <li>
             #= title #
-            <a href="\\#" class="remove" title="Remove"  data-bind="click: removeReportColumn" data-report-field="#= title #">x</a>
+            <a href="\\#" class="remove" title="Remove"  data-bind="click: removeReportColumn" data-report-column="#= title #">x</a>
         </li>
     </script>
     
     <script type="text/x-kendo-template" id="reportFilters">
         <li>
-            #= reportFieldTitle # #= filterTitle # #= filterValue # 
+            #= reportColumnTitle # #= filterTitle # #= filterValue # 
             <a href="\\#" class="remove" title="Remove" data-bind="click: removeReportFilter" data-report-hashCode="#= hashCode #">x</a>
         </li>
     </script>

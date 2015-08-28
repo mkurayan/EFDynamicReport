@@ -8,22 +8,22 @@ namespace DynamicReport.Report
     public interface IReportModel
     {
         /// <summary>
-        /// Collection of fields which will be available for this report.
+        /// Collection of columns which will be available for this report.
         /// </summary>
-        IEnumerable<IReportField> ReportFields { get; }
+        IEnumerable<IReportColumn> ReportColumns { get; }
 
         /// <summary>
-        /// Add report field to ReportFields collection.
+        /// Add report column to ReportColumns collection.
         /// </summary>
         /// <param name="reportField"></param>
-        void AddReportField(IReportField reportField);
+        void AddReportColumn(IReportColumn reportField);
 
         /// <summary>
-        /// Get report field from ReportFields collection.
+        /// Get report column from ReportColumns collection.
         /// </summary>
-        /// <param name="title">Title of report field.</param>
-        /// <returns>IReportField or null if there is no field with such Title.</returns>
-        IReportField GetReportField(string title);
+        /// <param name="title">Title of report column.</param>
+        /// <returns>IReportField or null if there is no column with such Title.</returns>
+        IReportColumn GetReportColumn(string title);
 
         /// <summary>
         /// Set report data source.
@@ -33,11 +33,11 @@ namespace DynamicReport.Report
 
 
         /// <summary>
-        /// Process report with proposed fields and filters, return report data.
+        /// Process report with proposed columns and filters, return report data.
         /// </summary>
-        /// <param name="columns">Fields which will be included in report.</param>
+        /// <param name="columns">Columns which will be included in report.</param>
         /// <param name="filters">Filters which will be applied on report.</param>
         /// <returns></returns>
-        List<Dictionary<string, object>> Get(IEnumerable<IReportField> columns, IEnumerable<IReportFilter> filters);
+        List<Dictionary<string, object>> Get(IEnumerable<IReportColumn> columns, IEnumerable<IReportFilter> filters);
     }
 }

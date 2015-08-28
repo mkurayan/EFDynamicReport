@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using DynamicReport.Demo.DB.Entities;
-using DynamicReport.Demo.Models.SchoolReportsMapping.Fields;
+using DynamicReport.Demo.Models.SchoolReportsMapping.Columns;
 using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
@@ -20,28 +20,28 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping
             StudentTable = new TableMapper<Student>(queryExtractor, "s");
         }
 
-        private IEnumerable<IReportField> _reportFields;
-        public override IEnumerable<IReportField> ReportFields
+        private IEnumerable<IReportColumn> _reportColumns;
+        public override IEnumerable<IReportColumn> ReportColumns
         {
             get
             {
-                if (_reportFields == null)
+                if (_reportColumns == null)
                 {
-                    _reportFields = new List<IReportField>
+                    _reportColumns = new List<IReportColumn>
                     {
-                        StudentTable.Field("First Name", x => x.FirstName),
-                        StudentTable.Field("Last Name", x => x.LastName),
-                        StudentTable.Field("Phone", x => x.Phone),
-                        StudentTable.Field("Home Adress", x => x.HomeAdress),
-                        new AverageScore(queryExtractor, StudentTable).Field("Average Score"),
-                        new MinimumScore(queryExtractor, StudentTable).Field("Minimum Score"),
-                        new MaximumScore(queryExtractor, StudentTable).Field("Maximum Score"),
-                        new AgeField(StudentTable).Field("Age"),
-                        new SubjectsField(queryExtractor, StudentTable).Field("Subjects")
+                        StudentTable.Column("First Name", x => x.FirstName),
+                        StudentTable.Column("Last Name", x => x.LastName),
+                        StudentTable.Column("Phone", x => x.Phone),
+                        StudentTable.Column("Home Adress", x => x.HomeAdress),
+                        new AverageScore(queryExtractor, StudentTable).Column("Average Score"),
+                        new MinimumScore(queryExtractor, StudentTable).Column("Minimum Score"),
+                        new MaximumScore(queryExtractor, StudentTable).Column("Maximum Score"),
+                        new Age(StudentTable).Column("Age"),
+                        new Subjects(queryExtractor, StudentTable).Column("Subjects")
                     };
                 }
 
-                return _reportFields;
+                return _reportColumns;
             }
         }
 

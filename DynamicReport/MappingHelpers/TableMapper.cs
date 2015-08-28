@@ -34,28 +34,28 @@ namespace DynamicReport.MappingHelpers
         }
 
         /// <summary>
-        /// Create ReportField from Lambda mapping.
+        /// Create ReportColumn from Lambda mapping.
         /// </summary>
-        /// <typeparam name="TProperty">C# type of output field.</typeparam>
-        /// <param name="title">Title for field, this title will be used in report.</param>
-        /// <param name="property">Expression which represent output field.</param>
-        /// <returns>ReportField object</returns>
-        public IReportField Field<TProperty>(string title, Expression<Func<TSource, TProperty>> property)
+        /// <typeparam name="TProperty">C# type of output column.</typeparam>
+        /// <param name="title">Title for column, this title will be used in report.</param>
+        /// <param name="property">Expression which represent output column.</param>
+        /// <returns>ReportColumn object</returns>
+        public IReportColumn Column<TProperty>(string title, Expression<Func<TSource, TProperty>> property)
         {
-            return GetReportField(title, Self, property);
+            return GetReportColumn(title, Self, property);
         }
 
         /// <summary>
-        /// Create ReportField from Lambda mapping.
+        /// Create ReportColumn from Lambda mapping.
         /// </summary>
-        /// <typeparam name="TProperty">C# type of output field.</typeparam>
-        /// <param name="title">Title for field, this title will be used in report.</param>
-        /// <param name="properties">Expressions which represents output field.</param>
-        /// <param name="sqlTemplate"> Allow to set custom format for output field or provide other transformations like combining or subtraction of output fields.</param>
-        /// <returns>ReportField object</returns>
-        public IReportField Field<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
+        /// <typeparam name="TProperty">C# type of output column.</typeparam>
+        /// <param name="title">Title for column, this title will be used in report.</param>
+        /// <param name="properties">Expressions which represents output column.</param>
+        /// <param name="sqlTemplate"> Allow to set custom format for output column or provide other transformations like combining or subtraction of output columns.</param>
+        /// <returns>ReportColumn object</returns>
+        public IReportColumn Column<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] properties)
         {
-            return GetReportField(title, sqlTemplate, properties);
+            return GetReportColumn(title, sqlTemplate, properties);
         }
 
         public IReportDataSource GetReportDataSource()
@@ -67,7 +67,7 @@ namespace DynamicReport.MappingHelpers
         /// <summary>
         /// Extract column and table name from expression.
         /// </summary>
-        /// <param name="exp">Lambda expression which represent some field. Example: (Person p) => p.Name</param>
+        /// <param name="exp">Lambda expression which represent some column. Example: (Person p) => p.Name</param>
         /// <returns>SQL analog of expression, format: [TableName].[ColumnName] </returns>
         public string Column<TProperty>(Expression<Func<TSource, TProperty>> exp)
         {
@@ -84,11 +84,11 @@ namespace DynamicReport.MappingHelpers
             return string.Format("{0} {1}", QueryExtractor.GetSQLTableName(typeof(TSource)), GetTableAlias(typeof(TSource)));
         }
 
-        private IReportField GetReportField<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] outerExpressions)
+        private IReportColumn GetReportColumn<TProperty>(string title, string sqlTemplate, params Expression<Func<TSource, TProperty>>[] outerExpressions)
         {
             var sqlValueExpression = string.Format(sqlTemplate, outerExpressions.Select(Column).ToArray());
 
-            return new ReportField
+            return new ReportColumn
             {
                 Title = title,
                 SqlValueExpression = string.Format("({0})", sqlValueExpression)

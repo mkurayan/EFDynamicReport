@@ -3,29 +3,29 @@
 namespace DynamicReport.Report
 {
     /// <summary>
-    /// Represent single field in Report.
+    /// Represent single column in Report.
     /// </summary>
-    public interface IReportField
+    public interface IReportColumn
     {
         /// <summary>
-        /// Field title in report.
+        /// Column title in report.
         /// Example: "Full Name"
         /// </summary>
         string Title { get; set; }
 
         /// <summary>
-        /// Part of SQL query, describes report field data source.
+        /// Part of SQL query, describes report column data source.
         /// </summary>
         string SqlValueExpression { get; }
 
         /// <summary>
-        /// Sql alias which will be used for current field. 
+        /// Sql alias which will be used for current column. 
         /// Example: Select (p.FirstName + p.LastName) as fullName From ...
         /// </summary>
         string SqlAlias { get; }
 
         /// <summary>
-        /// This transformation will be applied on current field value before it will be passed to client.
+        /// This transformation will be applied on current column value before it will be passed to client.
         /// Allow to apply any custom transformation, examples: 
         /// 1. Format data from DB format to customer format
         /// 2. Apply any calculation

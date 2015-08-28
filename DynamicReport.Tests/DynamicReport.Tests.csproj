@@ -49,7 +49,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report\ReportDataSourceTests.cs" />
-    <Compile Include="Report\ReportFieldTests.cs" />
+    <Compile Include="Report\ReportColumnTests.cs" />
     <Compile Include="Report\ReportModelTests.cs" />
     <Compile Include="SqlEngine\QueryBuilderTests.cs" />
     <Compile Include="SqlEngine\QueryExecutorTests.cs" />

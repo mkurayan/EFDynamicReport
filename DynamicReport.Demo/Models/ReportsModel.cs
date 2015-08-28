@@ -77,20 +77,20 @@ namespace DynamicReport.Demo.Models
         /// <returns></returns>
         public IEnumerable<ReportColumnDTO> GetReportColumns()
         {
-            return Report.ReportFields.Select(x => new ReportColumnDTO { Title = x.Title, Alias = x.SqlAlias });
+            return Report.ReportColumns.Select(x => new ReportColumnDTO { Title = x.Title, Alias = x.SqlAlias });
         }
 
         public List<Dictionary<string, object>> GetReportData(ReportDTO reportDto)
         {
-            var fields = reportDto.Columns.Select(title => Report.GetReportField(title));
+            var columns = reportDto.Columns.Select(title => Report.GetReportColumn(title));
             var filters = reportDto.Filters.Select(filter => new ReportFilter
             {
-                ReportField = Report.GetReportField(filter.ReportFieldTitle),
+                ReportColumn = Report.GetReportColumn(filter.ReportColumnTitle),
                 Type = (FilterType)filter.FilterType,
                 Value = filter.FilterValue
             });
 
-            return Report.Get(fields, filters);
+            return Report.Get(columns, filters);
         }
     }
 

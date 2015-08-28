@@ -119,11 +119,11 @@
     </Compile>
     <Compile Include="Models\DTO.cs" />
     <Compile Include="Models\ReportsModel.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\AgeField.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\AverageScore.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\MaximumScore.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\MinimumScore.cs" />
-    <Compile Include="Models\SchoolReportsMapping\Fields\SubjectsField.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Columns\Age.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Columns\AverageScore.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Columns\MaximumScore.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Columns\MinimumScore.cs" />
+    <Compile Include="Models\SchoolReportsMapping\Columns\Subjects.cs" />
     <Compile Include="Models\SchoolReportsMapping\StudentsReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

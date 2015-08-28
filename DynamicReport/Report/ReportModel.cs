@@ -9,15 +9,13 @@ namespace DynamicReport.Report
 {
     public class ReportModel : IReportModel
     {
-        public IEnumerable<IReportField> ReportFields
-        {
-            get { return Fields.AsEnumerable(); }
-        }
-
         /// <summary>
-        /// Set of fields available for report.
+        /// Set of columns available for report.
         /// </summary>
-        private IList<IReportField> Fields { get; set; }
+        public IEnumerable<IReportColumn> ReportColumns
+        {
+            get { return _reportColumns.AsEnumerable(); }
+        }
 
         /// <summary>
         /// Report SQL query.
@@ -28,6 +26,8 @@ namespace DynamicReport.Report
         private readonly IQueryBuilder _queryBuilder;
 
         private readonly IQueryExecutor _queryExecutor;
+
+        private IList<IReportColumn> _reportColumns;
 
         public ReportModel(IQueryBuilder queryBuilder, IQueryExecutor queryExecutor)
         {
@@ -44,27 +44,27 @@ namespace DynamicReport.Report
             _queryBuilder = queryBuilder;
             _queryExecutor = queryExecutor;
 
-            Fields = new List<IReportField>();
+            _reportColumns = new List<IReportColumn>();
         }
 
-        public void AddReportField(IReportField reportField)
+        public void AddReportColumn(IReportColumn reportColumn)
         {
-            if (reportField == null)
+            if (reportColumn == null)
             {
-                throw new ArgumentNullException("reportField");
+                throw new ArgumentNullException("reportColumn");
             }
 
-            if (Fields.Any(x => x.SqlAlias == reportField.SqlAlias))
+            if (_reportColumns.Any(x => x.SqlAlias == reportColumn.SqlAlias))
             {
-                throw new ReportException(string.Format("Report model can not contain fields with equal SqlAliaces: {0}", reportField.SqlAlias));
+                throw new ReportException(string.Format("Report model can not contain columns with equal SqlAliaces: {0}", reportColumn.SqlAlias));
             }
 
-            Fields.Add(reportField);
+            _reportColumns.Add(reportColumn);
         }
 
-        public IReportField GetReportField(string title)
+        public IReportColumn GetReportColumn(string title)
         {
-            return Fields.FirstOrDefault(x => x.Title == title);
+            return _reportColumns.FirstOrDefault(x => x.Title == title);
         }
 
         public void SetDataSource(IReportDataSource dataSource)
@@ -82,11 +82,11 @@ namespace DynamicReport.Report
             DataSource = dataSource;
         }
         
-        public List<Dictionary<string, object>> Get(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters)
+        public List<Dictionary<string, object>> Get(IEnumerable<IReportColumn> columns, IEnumerable<IReportFilter> filters)
         {
-            if (fields == null)
+            if (columns == null)
             {
-                throw new ArgumentNullException("fields");
+                throw new ArgumentNullException("columns");
             }
 
             if (filters == null)
@@ -94,7 +94,7 @@ namespace DynamicReport.Report
                 throw new ArgumentNullException("filters");
             }
 
-            var errors = Validate(fields, filters);
+            var errors = Validate(columns, filters);
             if (errors.Length > 0)
             {
                 string errorMessage = FormatReportErrors(errors);
@@ -102,7 +102,7 @@ namespace DynamicReport.Report
             }
 
             //ToDo: check that DataSource not null!!!
-            var query = _queryBuilder.BuildQuery(fields, filters, DataSource.SqlQuery);
+            var query = _queryBuilder.BuildQuery(columns, filters, DataSource.SqlQuery);
 
             var data = _queryExecutor.ExecuteToDataTable(query);
 
@@ -110,21 +110,21 @@ namespace DynamicReport.Report
         }
 
         /// <summary>
-        /// Check that report can process specified fields and filters.
+        /// Check that report can process specified coluns and filters.
         /// </summary>
-        /// <param name="fields">Fields which proposed for report.</param>
+        /// <param name="columns">Columns which proposed for report.</param>
         /// <param name="filters">Filters which proposed for report.</param>
         /// <returns>Array with errors.</returns>
-        public string[] Validate(IEnumerable<IReportField> fields, IEnumerable<IReportFilter> filters)
+        public string[] Validate(IEnumerable<IReportColumn> columns, IEnumerable<IReportFilter> filters)
         {
             var errors = new List<string>();
 
             /****************************
              *  1. Validate ReportModel *
              ****************************/
-            if (!ReportFields.Any())
+            if (!ReportColumns.Any())
             {
-                errors.Add("ReportModel do not contains any ReportFields inside");
+                errors.Add("ReportModel do not contains any ReportColumns inside");
             }
 
             if (DataSource == null)
@@ -136,24 +136,24 @@ namespace DynamicReport.Report
              *  2. Validate Inputs       *
              ****************************/
             
-            if (!fields.Any())
+            if (!columns.Any())
             {
                 errors.Add("Report must have at least one output column.");
             }
 
-            foreach (var field in fields)
+            foreach (var column in columns)
             {
-                if (!Fields.Contains(field))
+                if (!ReportColumns.Contains(column))
                 {
-                    errors.Add("Unknow report filed: " + field.Title);
+                    errors.Add("Unknow report column: " + column.Title);
                 }
             }
 
             foreach (var filter in filters)
             {
-                if (!Fields.Contains(filter.ReportField))
+                if (!ReportColumns.Contains(filter.ReportColumn))
                 {
-                    errors.Add("Unknow report filter, field: " + filter.ReportField.Title);
+                    errors.Add("Unknow report filter, column: " + filter.ReportColumn.Title);
                 }
             }
 
@@ -180,11 +180,11 @@ namespace DynamicReport.Report
         {
             var rows = new List<Dictionary<string, object>>();
 
-            var reportFields = new IReportField[dt.Columns.Count];
+            var reportColumns = new IReportColumn[dt.Columns.Count];
 
             for (int i = 0; i < dt.Columns.Count; i++)
             {
-                reportFields[i] = Fields.Single(x => x.SqlAlias == dt.Columns[i].ColumnName);
+                reportColumns[i] = _reportColumns.Single(x => x.SqlAlias == dt.Columns[i].ColumnName);
             }
 
             foreach (DataRow dr in dt.Rows)
@@ -196,7 +196,7 @@ namespace DynamicReport.Report
                     string value = "";
                     if (dr[j] != null)
                     {
-                        value = reportFields[j].OutputValueTransformation(dr[j].ToString());
+                        value = reportColumns[j].OutputValueTransformation(dr[j].ToString());
                     }
 
                     row.Add(dt.Columns[j].ColumnName, value);

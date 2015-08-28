@@ -21,7 +21,7 @@
 
     public class FilterDTO
     {
-        public string ReportFieldTitle { get; set; }
+        public string ReportColumnTitle { get; set; }
         public int FilterType { get; set; }
         public string FilterValue { get; set; }
     }

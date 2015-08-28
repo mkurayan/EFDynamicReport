@@ -4,16 +4,16 @@ using DynamicReport.Demo.DB.Entities;
 using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 
-namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
+namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 {
-    public class AgeField
+    public class Age
     {
         private static readonly Regex AgePatter = new Regex(@"\d+\s+(Years?|Months?|Days?)");
 
         //Outer tables
         private TableMapper<Student> S;
 
-        public AgeField(TableMapper<Student> studentTable)
+        public Age(TableMapper<Student> studentTable)
         {
             S = studentTable;
         }
@@ -23,9 +23,9 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
             get { return S.Column(x => x.DayOfBirth); }
         }
 
-        public IReportField Field(string title)
+        public IReportColumn Column(string title)
         {
-            return new ReportField
+            return new ReportColumn
             {
                 Title = title,
                 SqlValueExpression = SqlValueExpression,

@@ -120,7 +120,7 @@ namespace DynamicReport.SqlEngine
             PropertyInfo propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
                 throw new ArgumentException(string.Format(
-                    "Expression '{0}' refers to a field, not a property.",
+                    "Expression '{0}' refers to a column, not a property.",
                     propertyLambda.ToString()));
 
             return propInfo;

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace DynamicReport.Report
 {
-    public class ReportField : IReportField
+    public class ReportColumn : IReportColumn
     {
         public string Title { get; set; }
 
@@ -22,16 +22,16 @@ namespace DynamicReport.Report
         public Func<string, string> InputValueTransformation { get; set; }
 
         /// <summary>
-        /// Create empty report field. 
+        /// Create empty report column. 
         /// </summary>
-        public ReportField()
+        public ReportColumn()
         {
             //set default transformations.
             OutputValueTransformation = x => x;
             InputValueTransformation = x => x;
         }
 
-        public bool Equals(ReportField other)
+        public bool Equals(ReportColumn other)
         {
             if (other == null)
                 return false;
@@ -58,7 +58,7 @@ namespace DynamicReport.Report
             if (this.GetType() != other.GetType())
                 return false;
 
-            return this.Equals(other as ReportField);
+            return this.Equals(other as ReportColumn);
         }
 
         public override int GetHashCode()
@@ -70,7 +70,7 @@ namespace DynamicReport.Report
             return hash;
         }
 
-        public static bool operator ==(ReportField lhs, ReportField rhs)
+        public static bool operator ==(ReportColumn lhs, ReportColumn rhs)
         {
             // Check for null on left side. 
             if (Object.ReferenceEquals(lhs, null))
@@ -88,7 +88,7 @@ namespace DynamicReport.Report
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(ReportField lhs, ReportField rhs)
+        public static bool operator !=(ReportColumn lhs, ReportColumn rhs)
         {
             return !(lhs == rhs);
         }

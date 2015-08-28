@@ -6,7 +6,7 @@ namespace DynamicReport.MappingHelpers
 {
     public abstract class ReportTemplate
     {
-        public abstract IEnumerable<IReportField> ReportFields { get; }
+        public abstract IEnumerable<IReportColumn> ReportColumns { get; }
 
         /// <summary>
         /// Data source for report.
@@ -29,9 +29,9 @@ namespace DynamicReport.MappingHelpers
 
             model.SetDataSource(ReportDataSource);
 
-            foreach (var repotField in ReportFields)
+            foreach (var repotColumn in ReportColumns)
             {
-                model.AddReportField(repotField);
+                model.AddReportColumn(repotColumn);
             }
 
             return model;

@@ -3,17 +3,17 @@ using DynamicReport.MappingHelpers;
 using DynamicReport.Report;
 using DynamicReport.SqlEngine;
 
-namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
+namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 {
-    public class MinimumScore
+    public class AverageScore
     {
         //Inner tables
         private TableMapper<ExamenResult> e;
         
         //Outer tables
-        private TableMapper<Student> S;
+        private TableMapper<Student> S; 
 
-        public MinimumScore(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
+        public AverageScore(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {
             S = studentTable;
             e = new TableMapper<ExamenResult>(queryExtractor);
@@ -24,15 +24,15 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Fields
             get
             {
                 return 
-                    " SELECT MIN(" + e.Column(x => x.Score) + ") " + 
+                    " SELECT AVG(" + e.Column(x => x.Score) + ") " + 
                     " FROM " + e.Table() + 
                     " WHERE " + e.Column(x => x.StudentId) + " = " + S.Column(x => x.StudentId);
             }
         }
 
-        public IReportField Field(string title)
+        public IReportColumn Column(string title)
         {
-            return new ReportField
+            return new ReportColumn
             {
                 Title = title,
                 SqlValueExpression = SqlValueExpression
