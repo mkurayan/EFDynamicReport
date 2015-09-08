@@ -31,10 +31,12 @@ app.ApiRequest = (function () {
     }
 
     function addDefaultErrorHandler(request, info) {
-        request.fail(function (xhr, status, error) {
+        request.error(function (xhr, status, error) {
             //Here we can implement any default error handler.
-            var error = "Error: " + error + ". Info: " + info;
-            alert(error);
+            console.warn("Error in: " + info);
+            var err = eval("(" + xhr.responseText + ")");
+            console.error(err.exceptionMessage);
+            alert(err.exceptionMessage);
         });
     }
 

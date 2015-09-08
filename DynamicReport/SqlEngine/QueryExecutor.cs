@@ -47,10 +47,10 @@ namespace DynamicReport.SqlEngine
 
                 return table;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 string msg = GetSQLErrorString(selectCommand.CommandText, selectCommand.Parameters);
-                throw new ReportException(msg);
+                throw new ReportException(string.Format("{0} {1}", e.Message, msg));
             }
             finally
             {

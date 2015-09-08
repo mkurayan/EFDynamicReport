@@ -36,7 +36,7 @@ app.KendoGrid = (function (global, $, kendo) {
                 filterable: true,
                 resizable: true,
                 selectable: "row",
-                height: 728,
+                height: 420,
                 dataSource: {
                     data: gridData,
                     pageSize: 10,

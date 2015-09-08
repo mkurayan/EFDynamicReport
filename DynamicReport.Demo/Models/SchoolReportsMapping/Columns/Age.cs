@@ -48,7 +48,7 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 
         private static string InputValueTransformation(string input)
         {
-            int years = 1900;
+            int years = 0;
             int months = 0;
             int days = 0;
 
