@@ -75,6 +75,21 @@
             if (columnDefenition == null)
                 return "You can not add a filter to a column that is not in the report";
 
+            if (filterDefenition.reportColumnTitle.indexOf("Score") > -1) {
+                if (!/^[0-9]+$/.test(filterDefenition.filterValue)) {
+                    return "Value for '" + filterDefenition.reportColumnTitle + "' filter must be a vaild integer";
+                }
+
+                if (parseInt(filterDefenition.filterValue, 10) > 2147483647) {
+                    return "Number is too big";
+                }
+            }
+
+            if (filterDefenition.reportColumnTitle === "Age" && 
+                !/\d+\s+(Years?|Months?|Days?)/.test(filterDefenition.filterValue)) {
+                return "Filter value do not contains any age parts. Example: '10 Years 1 Month 5 Days'";
+            }
+
             return null;
         },
 
