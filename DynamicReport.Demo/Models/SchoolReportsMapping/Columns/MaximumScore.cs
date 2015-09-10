@@ -16,7 +16,7 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
         public MaximumScore(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {
             S = studentTable;
-            e = new TableMapper<ExamenResult>(queryExtractor);
+            e = new TableMapper<ExamenResult>(queryExtractor, "max");
         }
 
         public string SqlValueExpression

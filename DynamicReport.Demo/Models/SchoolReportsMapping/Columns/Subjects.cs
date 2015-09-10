@@ -16,8 +16,8 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 
         public Subjects(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {
-            sb = new TableMapper<Subject>(queryExtractor);
-            e = new TableMapper<ExamenResult>(queryExtractor);
+            sb = new TableMapper<Subject>(queryExtractor, "subj");
+            e = new TableMapper<ExamenResult>(queryExtractor, "subj");
             S = studentTable;
         }
 
