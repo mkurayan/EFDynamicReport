@@ -9,29 +9,9 @@ namespace DynamicReport.SqlEngine
 {
     public class QueryBuilder : IQueryBuilder
     {
-        private static Dictionary<FilterType, Func<string, string>> _tBag;
-        private static Dictionary<FilterType, Func<string, string>> TBag 
+        public SqlCommand BuildQuery(IEnumerable<IReportColumn> columns, IEnumerable<IReportFilter> filters, string dataSource)
         {
-            get
-            {
-                if (_tBag == null)
-                {
-                    Func<string, string> sqlLike = x => "'%' + " + x + " + '%'";
-
-                    _tBag = new Dictionary<FilterType, Func<string, string>>()
-                    {
-                        { FilterType.Include, sqlLike},
-                        { FilterType.NotInclude, sqlLike}
-                    };
-                }
-
-                return _tBag;
-            }
-        }
-
-        public SqlCommand BuildQuery(IEnumerable<IReportColumn> fcolumns, IEnumerable<IReportFilter> filters, string dataSource)
-        {
-            if (fcolumns == null || !fcolumns.Any())
+            if (columns == null || !columns.Any())
             {
                 throw new ReportException("Columns collection is null or empty. Impossible to build query without any output values.");
             }
@@ -42,11 +22,13 @@ namespace DynamicReport.SqlEngine
             }
 
             //Always order report columns and filters. As result SQL will not generate different compiled plans when columns in reports have different order.
-            IReportColumn[] reportColumns = fcolumns.OrderBy(x => x.Title).ToArray();
+            IReportColumn[] reportColumns = columns.OrderBy(x => x.Title).ToArray();
+            IReportFilter[] reportFilters = 
+                filters != null ? 
+                filters.OrderBy(x => x.ReportColumn.Title).ThenBy(x => x.Type).ToArray() 
+                : Enumerable.Empty<IReportFilter>().ToArray();
 
             string colsOrder = "";
-
-            filters = filters != null ? filters.OrderBy(x => x.ReportColumn.Title).ThenBy(x => x.Type).ToArray() : Enumerable.Empty<IReportFilter>();
 
             foreach (var columnDefenition in reportColumns)
             {
@@ -58,19 +40,15 @@ namespace DynamicReport.SqlEngine
 
             var sqlParams = new List<IDataParameter>();
             string sqlFilter = "";
-            foreach (var filter in filters)
+            foreach (var filter in reportFilters)
             {
-                var formattedFilterValue = filter.ReportColumn.InputValueTransformation != null
-                    ? filter.ReportColumn.InputValueTransformation(filter.Value)
-                    : filter.Value;
-
-                var parameter = GenerateDbParameter("p" + sqlParams.Count, formattedFilterValue, SqlDbType.NVarChar);
+                var parameter = GenerateDbParameter("p" + sqlParams.Count, filter.FormattedValue, SqlDbType.NVarChar);
                 sqlParams.Add(parameter);
 
                 if (!string.IsNullOrEmpty(sqlFilter))
                     sqlFilter += " AND ";
 
-                sqlFilter += BuildSqlFilter(filter.Type, filter.ReportColumn.SqlValueExpression, parameter.ParameterName);
+                sqlFilter += filter.BuildSqlFilter(parameter.ParameterName);
             }
 
             string sqlQuery = string.Format("SELECT {0} FROM {1}", colsOrder, dataSource);
@@ -93,54 +71,7 @@ namespace DynamicReport.SqlEngine
             return !string.IsNullOrWhiteSpace(sql) && !sql.EndsWith(",");
         }
 
-        private static string BuildSqlFilter(FilterType filterType, string sqlValueExpression, string sqlpParameterName)
-        {
-            //Apply SQL transformation. Wrap walue to %..% symbols and so on.
-            if (TBag.ContainsKey(filterType))
-            {
-                sqlpParameterName = TBag[filterType](sqlpParameterName);
-            }
-            
-
-            //Wrap SQL query with 'isnull(...) check' in ordet to correct checking for inequality.
-            //For more detail see http://stackoverflow.com/questions/5618357/sql-server-null-vs-empty-string
-            sqlValueExpression = "isnull((" + sqlValueExpression + "),'')";
-
-            string sqlOperator;
-            switch (filterType)
-            {
-                case FilterType.Equal:
-                    sqlOperator = " = ";
-                    break;
-                case FilterType.NotEqual:
-                    sqlOperator = " != ";
-                    break;
-                case FilterType.GreatThenOrEqualTo:
-                    sqlOperator = " >= ";
-                    break;
-                case FilterType.GreatThen:
-                    sqlOperator = " > ";
-                    break;
-                case FilterType.LessThenOrEquaslTo:
-                    sqlOperator = " <= ";
-                    break;
-                case FilterType.LessThen:
-                    sqlOperator = " < ";
-                    break;
-                case FilterType.Include:
-                    sqlOperator = " like ";
-                    break;
-                case FilterType.NotInclude:
-                    sqlOperator = " not like ";
-                    break;
-                default:
-                    sqlOperator = " = ";
-                    break;
-            }
-
-            return sqlValueExpression + sqlOperator + sqlpParameterName;
-        }
-
+        
         private static IDataParameter GenerateDbParameter(string parameterName, object parameterValue, SqlDbType parameterType)
         {
             if (string.IsNullOrEmpty(parameterName) || parameterValue == null)

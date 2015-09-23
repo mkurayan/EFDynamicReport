@@ -83,14 +83,14 @@ namespace DynamicReport.Tests.SqlEngine
             Assert.That(command.Parameters.Count, Is.EqualTo(0));
         }
 
-        [TestCase(FilterType.Equal, "isnull(TestTable.fField,'') = @p0")]
-        [TestCase(FilterType.NotEqual, "isnull(TestTable.fField,'') != @p0")]
-        [TestCase(FilterType.GreatThen, "isnull(TestTable.fField,'') > @p0")]
-        [TestCase(FilterType.GreatThenOrEqualTo, "isnull(TestTable.fField,'') >= @p0")]
-        [TestCase(FilterType.LessThen, "isnull(TestTable.fField,'') < @p0")]
-        [TestCase(FilterType.LessThenOrEquaslTo, "isnull(TestTable.fField,'') <= @p0")]
-        [TestCase(FilterType.Include, "isnull(TestTable.fField,'') like '%' + @p0 + '%'")]
-        [TestCase(FilterType.NotInclude, "isnull(TestTable.fField,'') not like '%' + @p0 + '%'")]
+        [TestCase(FilterType.Equal, "isnull((TestTable.fField),'') = @p0")]
+        [TestCase(FilterType.NotEqual, "isnull((TestTable.fField),'') != @p0")]
+        [TestCase(FilterType.GreatThen, "isnull((TestTable.fField),'') > @p0")]
+        [TestCase(FilterType.GreatThenOrEqualTo, "isnull((TestTable.fField),'') >= @p0")]
+        [TestCase(FilterType.LessThen, "isnull((TestTable.fField),'') < @p0")]
+        [TestCase(FilterType.LessThenOrEquaslTo, "isnull((TestTable.fField),'') <= @p0")]
+        [TestCase(FilterType.Include, "isnull((TestTable.fField),'') like '%' + @p0 + '%'")]
+        [TestCase(FilterType.NotInclude, "isnull((TestTable.fField),'') not like '%' + @p0 + '%'")]
         public void BuildQuery_GivenSingleFilter__ValidSqlCommand(FilterType filterType, string expectedSqlExpression)
         {
             var reportFilters = new IReportFilter[]
@@ -148,7 +148,7 @@ namespace DynamicReport.Tests.SqlEngine
 
             SqlCommand command = queryBuilder.BuildQuery(_reportColumns, reportFilters, _dataSource);
 
-            var expectedSql = "SELECT (TestTable.fField) AS FirstField FROM TestTable WHERE isnull(TestTable.fField,'') != @p0 AND isnull(TestTable.fField,'') != @p1";
+            var expectedSql = "SELECT (TestTable.fField) AS FirstField FROM TestTable WHERE isnull((TestTable.fField),'') != @p0 AND isnull((TestTable.fField),'') != @p1";
 
             Assert.That(command.Parameters.Count, Is.EqualTo(2));
             Assert.That(command.Parameters[0].Value, Is.EqualTo("SomeValue"));

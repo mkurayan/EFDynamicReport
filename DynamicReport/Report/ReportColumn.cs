@@ -21,6 +21,8 @@ namespace DynamicReport.Report
 
         public Func<string, string> InputValueTransformation { get; set; }
 
+        public Func<string, FilterType, string, string> SearchConditionTransformation { get; set; }
+
         /// <summary>
         /// Create empty report column. 
         /// </summary>
@@ -28,7 +30,6 @@ namespace DynamicReport.Report
         {
             //set default transformations.
             OutputValueTransformation = x => x;
-            InputValueTransformation = x => x;
         }
 
         public bool Equals(ReportColumn other)

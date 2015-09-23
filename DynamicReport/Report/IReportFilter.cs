@@ -20,6 +20,19 @@
         /// Filter valuel.
         /// </summary>
         string Value { get; set; }
+
+        /// <summary>
+        /// Apply InputValueTransformation(defined in IReportColumn) to the filter value.
+        /// </summary>
+        /// <returns></returns>
+        string FormattedValue { get; }
+
+        /// <summary>
+        /// Build SQL filter for report column.
+        /// </summary>
+        /// <param name="parameterName">SQL parameter name (SQL parameter contains filter value).</param>
+        /// <returns></returns>
+        string BuildSqlFilter(string parameterName);
     }
 
     /// <summary>

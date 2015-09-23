@@ -30,7 +30,8 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
                 Title = title,
                 SqlValueExpression = SqlValueExpression,
                 OutputValueTransformation = OutputValueTransformation,
-                InputValueTransformation = InputValueTransformation
+                InputValueTransformation = InputValueTransformation,
+                SearchConditionTransformation = GetSearchCondition
             };
         }
 
@@ -48,36 +49,126 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 
         private static string InputValueTransformation(string input)
         {
-            int years = 0;
-            int months = 0;
-            int days = 0;
+            var ageString = new AgeString(input);
 
-            var matches = AgePatter.Matches(input);
-            foreach (Match match in matches)
+            return DateTime.UtcNow.AddYears(-1 * ageString.Years).AddMonths(-1 * ageString.Months).AddDays(-1 * ageString.Days).ToString("yyyy-MM-dd");
+        }
+
+        private string GetSearchCondition(string input, FilterType filterType, string paramName)
+        {
+            var ageString = new AgeString(input);
+
+            string datepart = "year";
+
+            if (ageString.Days > 0)
             {
-                var values = match.Value.Split(' ');
-
-                string interval = values[values.Length - 1];
-                int pariod = int.Parse(values[0]);
-
-                switch (interval)
-                {
-                    case "Year":
-                    case "Years":
-                        years = pariod;
-                        break;
-                    case "Month":
-                    case "Months":
-                        months = pariod;
-                        break;
-                    case "Day":
-                    case "Days":
-                        days = pariod;
-                        break;
-                }
+                datepart = "day";
+            }
+            else if (ageString.Months > 0)
+            {
+                datepart = "month";
             }
 
-            return DateTime.UtcNow.AddYears(-1 * years).AddMonths(-1 * months).AddDays(-1 * days).ToString("yyyy-MM-dd");
+            string sqlOperator;
+            switch (filterType)
+            {
+                case FilterType.Equal:
+                case FilterType.Include:
+                    sqlOperator = string.Format(" BETWEEN DATEADD({1}, -1, {0}) AND {0} ", paramName, datepart);
+                    break;
+                case FilterType.NotEqual:
+                case FilterType.NotInclude:
+                    sqlOperator = string.Format(" NOT BETWEEN DATEADD({1}, -1, {0}) AND {0} ", paramName, datepart);
+                    break;
+                case FilterType.GreatThenOrEqualTo:
+                    sqlOperator = " <= " + paramName;
+                    break;
+                case FilterType.GreatThen:
+                    sqlOperator = " < " + string.Format("DATEADD({1}, -1, {0})", paramName, datepart);
+                    break;
+                case FilterType.LessThenOrEquaslTo:
+                    sqlOperator = " >= " + string.Format("DATEADD({1}, -1, {0})", paramName, datepart);
+                    break;
+                case FilterType.LessThen:
+                    sqlOperator = " > " + paramName;
+                    break;
+                default:
+                    throw new ReportException(string.Format("Filter type not supported: {0}", filterType));
+            }
+
+            return SqlValueExpression + sqlOperator;
+        }
+
+        /// <summary>
+        /// Represent patient age.
+        /// </summary>
+        private class AgeString
+        {
+            private static readonly Regex AgePatter = new Regex(@"\d+\s+(Years?|Months?|Days?)");
+            
+            public string Age { get; private set; }
+
+            int _years;
+            int _months;
+            int _days;
+
+            public AgeString(string age)
+            {
+                Age = age;
+                ParseAge(age);
+            }
+
+            /// <summary>
+            /// Years component from age string
+            /// </summary>
+            public int Years 
+            {
+                get { return _years; }
+            }
+
+            /// <summary>
+            /// Months component from age string
+            /// </summary>
+            public int Months
+            {
+                get { return _months; }
+            }
+
+            /// <summary>
+            /// Days component from age string
+            /// </summary>
+            public int Days
+            {
+                get { return _days; }
+            }
+
+            private void ParseAge(string input)
+            {
+                var matches = AgePatter.Matches(input);
+                foreach (Match match in matches)
+                {
+                    var values = match.Value.Split(' ');
+
+                    string interval = values[values.Length - 1];
+                    int pariod = int.Parse(values[0]);
+
+                    switch (interval)
+                    {
+                        case "Year":
+                        case "Years":
+                            _years = pariod;
+                            break;
+                        case "Month":
+                        case "Months":
+                            _months = pariod;
+                            break;
+                        case "Day":
+                        case "Days":
+                            _days = pariod;
+                            break;
+                    }
+                }
+            }
         }
     }
 }
