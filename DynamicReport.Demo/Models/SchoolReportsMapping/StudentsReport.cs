@@ -10,14 +10,14 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping
 {
     public class StudentsReport : ReportTemplate
     {
-        private readonly IQueryExtractor queryExtractor;
-        public TableMapper<Student> StudentTable;
+        private readonly IQueryExtractor _queryExtractor;
+        private readonly TableMapper<Student> _studentTable;
 
         public StudentsReport(DbContext context)
             : base(new QueryBuilder(), new QueryExecutor(context.Database.Connection.ConnectionString))
         {
-            queryExtractor = new QueryExtractor(context);
-            StudentTable = new TableMapper<Student>(queryExtractor, "s");
+            _queryExtractor = new QueryExtractor(context);
+            _studentTable = new TableMapper<Student>(_queryExtractor, "s");
         }
 
         private IEnumerable<IReportColumn> _reportColumns;
@@ -29,15 +29,15 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping
                 {
                     _reportColumns = new List<IReportColumn>
                     {
-                        StudentTable.Column("First Name", x => x.FirstName),
-                        StudentTable.Column("Last Name", x => x.LastName),
-                        StudentTable.Column("Phone", x => x.Phone),
-                        StudentTable.Column("Home Adress", x => x.HomeAdress),
-                        new AverageScore(queryExtractor, StudentTable).Column("Average Score"),
-                        new MinimumScore(queryExtractor, StudentTable).Column("Minimum Score"),
-                        new MaximumScore(queryExtractor, StudentTable).Column("Maximum Score"),
-                        new Age(StudentTable).Column("Age"),
-                        new Subjects(queryExtractor, StudentTable).Column("Subjects")
+                        _studentTable.Column("First Name", x => x.FirstName),
+                        _studentTable.Column("Last Name", x => x.LastName),
+                        _studentTable.Column("Phone", x => x.Phone),
+                        _studentTable.Column("Home Adress", x => x.HomeAdress),
+                        new AverageScore(_queryExtractor, _studentTable).Column("Average Score"),
+                        new MinimumScore(_queryExtractor, _studentTable).Column("Minimum Score"),
+                        new MaximumScore(_queryExtractor, _studentTable).Column("Maximum Score"),
+                        new Age(_studentTable).Column("Age"),
+                        new Subjects(_queryExtractor, _studentTable).Column("Subjects")
                     };
                 }
 
@@ -47,7 +47,7 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping
 
         protected override IReportDataSource ReportDataSource
         {
-            get { return StudentTable.GetReportDataSource(); }
+            get { return _studentTable.GetReportDataSource(); }
         }
     }
 }

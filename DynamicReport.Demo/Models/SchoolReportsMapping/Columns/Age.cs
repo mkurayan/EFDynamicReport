@@ -8,10 +8,8 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
 {
     public class Age
     {
-        private static readonly Regex AgePatter = new Regex(@"\d+\s+(Years?|Months?|Days?)");
-
         //Outer tables
-        private TableMapper<Student> S;
+        private readonly TableMapper<Student> S;
 
         public Age(TableMapper<Student> studentTable)
         {
@@ -105,8 +103,8 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
         private class AgeString
         {
             private static readonly Regex AgePatter = new Regex(@"\d+\s+(Years?|Months?|Days?)");
-            
-            public string Age { get; private set; }
+
+            private string Age { get; set; }
 
             int _years;
             int _months;

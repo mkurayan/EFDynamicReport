@@ -8,11 +8,11 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
     public class Subjects
     {
         //Inner tables
-        private TableMapper<Subject> sb;
-        private TableMapper<ExamenResult> e; 
+        private readonly TableMapper<Subject> sb;
+        private readonly TableMapper<ExamenResult> e; 
 
         //Outer tables
-        private TableMapper<Student> S;
+        private readonly TableMapper<Student> S;
 
         public Subjects(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {

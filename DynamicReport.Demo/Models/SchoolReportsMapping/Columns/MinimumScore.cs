@@ -8,10 +8,10 @@ namespace DynamicReport.Demo.Models.SchoolReportsMapping.Columns
     public class MinimumScore
     {
         //Inner tables
-        private TableMapper<ExamenResult> e;
+        private readonly TableMapper<ExamenResult> e;
         
         //Outer tables
-        private TableMapper<Student> S;
+        private readonly TableMapper<Student> S;
 
         public MinimumScore(IQueryExtractor queryExtractor, TableMapper<Student> studentTable)
         {
